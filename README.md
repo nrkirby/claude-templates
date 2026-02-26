@@ -9,7 +9,7 @@ The aim of the repository is to use Claude Code in YOLO mode (`--dangerously-ski
 ### Quick Start
 
 ```bash
-./setup.sh
+./install.sh
 
 ./check-config.sh /path/to/your/repo
 ```
@@ -34,7 +34,7 @@ This means that the sandbox will protect you from some issues (a process reading
 
 ## Setup
 
-To use the project, run the command [setup.sh](setup.sh). This will configure your Claude instance with some extra plugins, commands, and other helpers. Use `--clean` for a fresh install when you want to remove stale configuration that might not be properly overridden. The `--dry-run` flag lets you preview what would be deleted before committing.
+To use the project, run the command [install.sh](install.sh). This will configure your Claude instance with some extra plugins, commands, and other helpers. Use `--clean` for a fresh install when you want to remove stale configuration that might not be properly overridden. The `--dry-run` flag lets you preview what would be deleted before committing.
 
 After running the command, you will need to configure a couple of environment variables with your own keys, so that some MCP servers work.
 
@@ -87,7 +87,7 @@ The following is assumed when working with a project:
 
 The repository has the following files:
 
-- **setup.sh** - Main setup script that installs Claude Code, plugins, and dependencies system-wide (macOS/Linux).
+- **install.sh** - Main setup script that installs Claude Code, plugins, and dependencies system-wide (macOS/Linux).
 - **check-config.sh** - Validates that a project folder is properly configured for Claude Code usage, checking for required tools and optional API keys.
 - **sync-worktree.sh** - Syncs gitignored development files (.claude/, .serena/, .env*, etc.) from main worktree to target worktrees.
 - **bin/** - Executable directory containing cl.sh launcher script.
