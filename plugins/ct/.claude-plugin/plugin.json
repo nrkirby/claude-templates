@@ -1,0 +1,19 @@
+{
+  "name": "ct",
+  "description": "Claude Templates - Tested configuration of skills, commands, agents, and MCP servers for Claude Code. Designed for sandbox mode with safety guards.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Pere Villega",
+    "url": "https://github.com/pvillega"
+  },
+  "repository": "https://github.com/pvillega/claude-templates",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "skills",
+    "agents",
+    "sandbox",
+    "tdd",
+    "security"
+  ]
+}

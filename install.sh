@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 # Claude Templates Setup Script
-# Compatible with bash and zsh on macOS and Linux
+# Installs plugins via marketplace, merges sandbox settings, and copies template CLAUDE.md.
+# Compatible with bash and zsh on macOS and Linux.
 
 # ==============================================================================
 # CONFIGURATION
@@ -18,12 +19,14 @@ readonly NPM_PACKAGES=(
 
 # Claude plugin marketplaces (format: "owner/repo:name")
 readonly MARKETPLACES=(
+    "pvillega/claude-templates:claude-templates"
     "obra/superpowers-marketplace:superpowers-marketplace"
     "lackeyjb/playwright-skill:playwright-skill"
 )
 
 # Claude plugins to install (format: "plugin@marketplace")
 readonly PLUGINS=(
+    "ct@claude-templates"
     "superpowers@superpowers-marketplace"
     "playwright-skill@playwright-skill"
 )
@@ -66,7 +69,7 @@ print_summary() {
     echo ""
 
     if [ ${#WARNINGS[@]} -eq 0 ] && [ ${#ERRORS[@]} -eq 0 ]; then
-        echo "✓ Setup completed successfully!"
+        echo "Setup completed successfully!"
         echo ""
     fi
 
@@ -81,7 +84,7 @@ print_summary() {
     if [ ${#ERRORS[@]} -gt 0 ]; then
         echo "ERRORS:"
         for error in "${ERRORS[@]}"; do
-            echo "⚠ $error"
+            echo "! $error"
         done
         echo ""
     fi
@@ -103,6 +106,9 @@ print_summary() {
 # Displays usage information
 show_help() {
     echo "Claude Templates Setup Script"
+    echo ""
+    echo "Installs Claude plugins via marketplace, merges sandbox settings,"
+    echo "and copies the template CLAUDE.md to ~/.claude/."
     echo ""
     echo "Usage: $0 [OPTIONS]"
     echo ""
@@ -136,7 +142,7 @@ install_jq() {
     echo "Checking for jq..."
 
     if command -v jq &> /dev/null; then
-        echo "✓ jq already installed: $(jq --version)"
+        echo "jq already installed: $(jq --version)"
         return 0
     fi
 
@@ -179,7 +185,7 @@ install_jq() {
         critical_error "jq installation appeared to succeed but jq command is still not available"
     fi
 
-    echo "✓ jq installed successfully"
+    echo "jq installed successfully"
 }
 
 # Installs npm global packages from NPM_PACKAGES array
@@ -191,7 +197,7 @@ install_npm_packages() {
         if ! npm install -g "$package"; then
             critical_error "Failed to install $package"
         fi
-        echo "✓ $package installed successfully"
+        echo "$package installed successfully"
     done
 }
 
@@ -209,9 +215,9 @@ configure_marketplaces() {
 
         # Try to update first, add if that fails
         if claude plugin marketplace update "$marketplace_name" 2>/dev/null; then
-            echo "✓ Marketplace $marketplace_name updated"
+            echo "Marketplace $marketplace_name updated"
         elif claude plugin marketplace add "$marketplace_path"; then
-            echo "✓ Marketplace $marketplace_path added"
+            echo "Marketplace $marketplace_path added"
         else
             add_warning "Failed to configure marketplace $marketplace_path"
         fi
@@ -235,7 +241,7 @@ install_plugins() {
         if ! claude plugin install "$plugin"; then
             add_warning "Failed to install plugin $plugin"
         else
-            echo "✓ Plugin $plugin installed successfully"
+            echo "Plugin $plugin installed successfully"
         fi
     done
 }
@@ -243,98 +249,46 @@ install_plugins() {
 # Sets up the Playwright skill by running npm setup in its directory
 setup_playwright_skill() {
     echo "Setting up Playwright skill..."
-    local playwright_dir="$HOME/.claude/plugins/marketplaces/playwright-skill/skills/playwright-skill"
+    local playwright_dir
 
-    if [ -d "$playwright_dir" ]; then
+    # Try known plugin cache locations
+    playwright_dir=$(find "$HOME/.claude/plugins" -type d -name "playwright-skill" -path "*/skills/*" 2>/dev/null | head -1)
+
+    if [ -n "$playwright_dir" ] && [ -d "$playwright_dir" ]; then
         echo "Running npm setup in Playwright skill directory..."
         if ! (cd "$playwright_dir" && npm run setup); then
             add_warning "Failed to run npm setup for Playwright skill"
         else
-            echo "✓ Playwright skill setup completed"
+            echo "Playwright skill setup completed"
         fi
     else
-        add_warning "Playwright skill directory not found at $playwright_dir, skipping npm setup"
+        add_warning "Playwright skill directory not found, skipping npm setup. Run 'npm run setup' manually in the playwright-skill plugin directory."
     fi
 }
 
-# Copies bin/cl.sh to ~/.local/bin/ and makes it executable
-# Warns if ~/.local/bin is not in PATH
-copy_bin_files() {
-    echo "Copying bin/cl.sh to ~/.local/bin/..."
+# Copies templates/CLAUDE.md to ~/.claude/CLAUDE.md
+copy_template_claude_md() {
+    echo "Setting up template CLAUDE.md..."
+    local template="$SCRIPT_DIR/templates/CLAUDE.md"
+    local dest="$HOME/.claude/CLAUDE.md"
 
-    if [ ! -f "$SCRIPT_DIR/bin/cl.sh" ]; then
-        add_warning "bin/cl.sh not found in script directory, skipping"
+    if [ ! -f "$template" ]; then
+        add_warning "templates/CLAUDE.md not found, skipping"
         return 0
     fi
 
-    # Create ~/.local/bin if it doesn't exist
-    mkdir -p "$HOME/.local/bin"
-
-    if ! cp "$SCRIPT_DIR/bin/cl.sh" "$HOME/.local/bin/cl.sh"; then
-        add_error "Failed to copy bin/cl.sh"
-        return 1
-    fi
-
-    # Make executable
-    chmod +x "$HOME/.local/bin/cl.sh"
-    echo "✓ bin/cl.sh copied successfully"
-
-    # Check if ~/.local/bin is in PATH
-    if ! echo "$PATH" | grep -q "$HOME/.local/bin"; then
-        add_warning "~/.local/bin is not in your PATH. Add it by adding this line to your shell config (~/.bashrc or ~/.zshrc): export PATH=\"\$HOME/.local/bin:\$PATH\""
-    fi
-}
-
-# Copies .claude folder contents to ~/.claude/
-# Skips identical files, reports conflicts for differing files
-copy_claude_config() {
-    echo "Copying .claude folder contents..."
-
-    if [ ! -d "$SCRIPT_DIR/.claude" ]; then
-        add_warning ".claude folder not found in script directory, skipping"
-        return 0
-    fi
-
-    # Create ~/.claude if it doesn't exist
     mkdir -p "$HOME/.claude"
 
-    # Find all files in .claude (excluding directories)
-    while IFS= read -r -d '' source_file; do
-        # Get relative path from .claude directory
-        local rel_path="${source_file#$SCRIPT_DIR/.claude/}"
-        local dest_file="$HOME/.claude/$rel_path"
-
-        # Create destination directory if needed
-        local dest_dir
-        dest_dir="$(dirname "$dest_file")"
-        mkdir -p "$dest_dir"
-
-        # Check if destination file exists
-        if [ -f "$dest_file" ]; then
-            # File exists, compare
-            if diff -q "$source_file" "$dest_file" &>/dev/null; then
-                # Files are identical, skip
-                echo "  Skipping $rel_path (identical)"
-            else
-                # Files differ, log error and continue
-                add_error "Conflict: $rel_path differs between source and destination. Manual merge required."
-            fi
-        else
-            # File doesn't exist, copy it
-            if cp "$source_file" "$dest_file"; then
-                echo "  ✓ Copied $rel_path"
-            else
-                add_error "Failed to copy $rel_path"
-            fi
-        fi
-    done < <(find "$SCRIPT_DIR/.claude" -type f -print0)
-
-    echo "✓ .claude folder processing completed"
+    if [ -f "$dest" ]; then
+        echo "  ~/.claude/CLAUDE.md already exists, skipping (use --clean to replace)"
+    else
+        cp "$template" "$dest"
+        echo "  Copied templates/CLAUDE.md to ~/.claude/CLAUDE.md"
+    fi
 }
 
 # Merges JSON configuration files into ~/.claude.json and ~/.claude/settings.json
 # - Sets autoCompactEnabled in ~/.claude.json
-# - Merges .mcp.json into ~/.claude.json mcpServers (additive only)
 # - Merges sandbox-settings.json into ~/.claude/settings.json (recursive overwrite)
 merge_json_configs() {
     echo "Updating JSON configurations..."
@@ -346,47 +300,9 @@ merge_json_configs() {
     fi
 
     if jq '. + {"autoCompactEnabled": false}' "$HOME/.claude.json" > "$HOME/.claude.json.tmp" && mv "$HOME/.claude.json.tmp" "$HOME/.claude.json"; then
-        echo "✓ autoCompactEnabled set to false"
+        echo "autoCompactEnabled set to false"
     else
         add_error "Failed to update autoCompactEnabled in ~/.claude.json"
-    fi
-
-    # Merge .mcp.json into ~/.claude.json mcpServers (additive only)
-    echo "Merging MCP server configurations..."
-    if [ ! -f "$SCRIPT_DIR/.mcp.json" ]; then
-        add_warning ".mcp.json not found in script directory, skipping MCP merge"
-    else
-        # Ensure mcpServers key exists in ~/.claude.json
-        if ! jq '.mcpServers //= {}' "$HOME/.claude.json" > "$HOME/.claude.json.tmp" && mv "$HOME/.claude.json.tmp" "$HOME/.claude.json"; then
-            add_error "Failed to initialize mcpServers in ~/.claude.json"
-        else
-            # Get list of keys from source .mcp.json
-            local mcp_keys
-            mcp_keys=$(jq -r '.mcpServers | keys[]' "$SCRIPT_DIR/.mcp.json" 2>/dev/null)
-
-            if [ -n "$mcp_keys" ]; then
-                # Iterate through each key
-                while IFS= read -r key; do
-                    # Check if key already exists in ~/.claude.json mcpServers
-                    if jq -e ".mcpServers | has(\"$key\")" "$HOME/.claude.json" > /dev/null 2>&1; then
-                        echo "  Skipping $key (already exists in ~/.claude.json)"
-                    else
-                        # Add key to mcpServers
-                        local server_config
-                        server_config=$(jq --arg key "$key" '.mcpServers[$key]' "$SCRIPT_DIR/.mcp.json")
-                        if jq --arg key "$key" --argjson config "$server_config" '.mcpServers[$key] = $config' "$HOME/.claude.json" > "$HOME/.claude.json.tmp" && mv "$HOME/.claude.json.tmp" "$HOME/.claude.json"; then
-                            echo "  ✓ Added $key to mcpServers"
-                        else
-                            add_error "Failed to add $key to mcpServers"
-                        fi
-                    fi
-                done <<< "$mcp_keys"
-
-                echo "✓ MCP server configuration merge completed"
-            else
-                add_warning ".mcp.json is empty or invalid, skipping merge"
-            fi
-        fi
     fi
 
     # Merge sandbox-settings.json into ~/.claude/settings.json (recursive overwrite)
@@ -410,7 +326,7 @@ merge_json_configs() {
             # Perform recursive merge with overwrite semantics
             # The * operator in jq performs a recursive merge where right-hand side overwrites left
             if jq -s '.[0] * .[1]' "$HOME/.claude/settings.json" "$SCRIPT_DIR/sandbox-settings.json" > "$HOME/.claude/settings.json.tmp" && mv "$HOME/.claude/settings.json.tmp" "$HOME/.claude/settings.json"; then
-                echo "✓ Sandbox settings merged successfully (existing keys overwritten)"
+                echo "Sandbox settings merged successfully (existing keys overwritten)"
             else
                 add_error "Failed to merge sandbox-settings.json into ~/.claude/settings.json"
             fi
@@ -424,15 +340,19 @@ prepare_env_instructions() {
     echo "Preparing environment variable configuration..."
 
     ENV_VAR_INSTRUCTIONS="ENVIRONMENT VARIABLES:
-Add the following environment variables to your shell configuration file (~/.bashrc or ~/.zshrc):
+A mise.toml.example file is provided in the repository.
+Copy it and fill in your API keys:
 
-export PERPLEXITY_API_KEY=\"your-api-key-here\"
-export TAVILY_API_KEY=\"your-api-key-here\"
+  cp mise.toml.example mise.toml
+  # Edit mise.toml with your actual API keys
+  mise trust
 
-After adding them, populate them with your actual API keys.
-Then reload your shell configuration with: source ~/.bashrc (or source ~/.zshrc)"
+Alternatively, add these to your shell configuration (~/.bashrc or ~/.zshrc):
 
-    echo "✓ Environment variable instructions prepared"
+  export PERPLEXITY_API_KEY=\"your-api-key-here\"
+  export TAVILY_API_KEY=\"your-api-key-here\""
+
+    echo "Environment variable instructions prepared"
 }
 
 # Removes existing Claude configuration files
@@ -654,7 +574,7 @@ echo "Checking prerequisites..."
 if ! command -v npm &> /dev/null; then
     critical_error "npm is required but not installed. Please install Node.js and npm first."
 fi
-echo "✓ npm found: $(npm --version)"
+echo "npm found: $(npm --version)"
 echo ""
 
 # Install jq
@@ -677,13 +597,12 @@ echo ""
 setup_playwright_skill
 echo ""
 
-# Copy configuration files
-copy_bin_files
-copy_claude_config
-echo ""
-
 # Update JSON configurations
 merge_json_configs
+echo ""
+
+# Copy template CLAUDE.md
+copy_template_claude_md
 echo ""
 
 # Prepare environment variable instructions

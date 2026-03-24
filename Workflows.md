@@ -8,15 +8,13 @@ Use this workflow when opening a project for the first time.
 
 1.  **Initialise Project**
     *   **Command:** `/ct:init`
-    *   **Action:** Analyses codebase structure, generates `.claude/CLAUDE.md`, sets up Serena onboarding, and creates project memories.
+    *   **Action:** Analyses codebase structure and generates `.claude/CLAUDE.md` with project-specific instructions.
 2.  **Index Codebase (Optional)**
     *   **Command:** `/ct:repo-index`
     *   **Action:** Creates `PROJECT_INDEX.md`. Recommended for repositories with 1000+ files for token-efficient context.
 3.  **Setup Shell Aliases (Optional)**
     *   **Command:** `/ct:discover-aliases`
     *   **Action:** Detects tool replacements (e.g., `cat` → `bat`, `grep` → `rg`) and generates documentation for Claude to bypass them.
-
-*Note: After initialisation, Serena automatically loads relevant memories at the start of every session.*
 
 ## 2. Feature Development Workflow
 
@@ -48,24 +46,7 @@ Some recommendations:
 - for loosely coupled work, you can have 1 agent generating plan files while another is implementing something.
 
 
-## 3. Memory Management
-
-### Session Memory (Short-term)
-Save valuable insights from the current session to persistent storage.
-*   **Command:** `/ct:save-session-memory`
-*   **Prompts:** Focus area (Decisions/Problems), Topic, and Details.
-*   **Action:** Persists to Serena memory (accessible via `read_memory()` in future).
-
-### Serena Memory System (Long-term)
-Interact with project-level knowledge using natural language.
-
-*   **To Create Memory:**
-    > "Write a memory called 'authentication_flow' describing how auth works..."
-    > "Write a memory about this refactoring for future reference..."
-*   **To Read Memory:**
-    > "Read the authentication_flow memory before we modify the login system..."
-
-## 4. Investigation & Research
+## 3. Investigation & Research
 
 ### Systematic Debugging
 Trigger specific debugging skills using these natural language phrases.
@@ -96,7 +77,7 @@ Trigger specific debugging skills using these natural language phrases.
 *   "Find all usages of the PaymentService"
 
 
-## 5. Quality Assurance
+## 4. Quality Assurance
 
 ### Code Review
 Choose the right tool based on the complexity of the review.
@@ -123,7 +104,7 @@ Choose the right tool based on the complexity of the review.
 2.  **Loads:** `performance-optimization`
 3.  **Workflow:** Profile $\rightarrow$ Optimise $\rightarrow$ Measure $\rightarrow$ Document.
 
-## 6. Domain-Specific Workflows
+## 5. Domain-Specific Workflows
 
 Specific keywords trigger specialized enforcement skills to ensure safety and best practices.
 
@@ -152,7 +133,7 @@ Specific keywords trigger specialized enforcement skills to ensure safety and be
     *   **Trigger:** "Validate at every layer..."
     *   **Loads:** `superpowers:defense-in-depth`
 
-## 7. Architecture & Design
+## 6. Architecture & Design
 
 *   **Architectural Decisions:**
     *   **Trigger:** "Design the architecture for..." or "Should we use X or Y..."
@@ -161,7 +142,7 @@ Specific keywords trigger specialized enforcement skills to ensure safety and be
     *   **Trigger:** "What could break...", "All edge cases...", "Bulletproof..."
     *   **Loads:** `edge-case-discovery`
 
-## 8. Meta-Workflows (Extending Claude)
+## 7. Meta-Workflows (Extending Claude)
 
 ### Creating New Capabilities
 *   **Create Agent:**
@@ -182,7 +163,7 @@ Specific keywords trigger specialized enforcement skills to ensure safety and be
 *   **Loads:** `confidence-check`
 
 
-## 9. Completion Protocol
+## 8. Completion Protocol
 
 Before considering any task finished:
 
@@ -191,8 +172,7 @@ Before considering any task finished:
     *   **Loads:** `superpowers:verification-before-completion`
 2.  **Testing:** Run `buildAll.sh` (or project equivalent).
 3.  **Documentation:** `/ct:grammar-check`
-4.  **Save Knowledge:** `/ct:save-session-memory`
-5.  **Commit:** `/ct:commit`
+4.  **Commit:** `/ct:commit`
 
 
 ## Appendix: Tool Reference Table
@@ -219,16 +199,3 @@ Before considering any task finished:
 | **Security** | | |
 | Security analysis | "Authentication..." | Skill |
 | Payment logic | "Payment..." | Skill |
-
-### Serena Tools
-
-| Tool | Purpose | Cost |
-| :--- | :--- | :--- |
-| `get_symbols_overview` | First step for any file | Low |
-| `find_symbol` | Locating specific code | Low-Med |
-| `find_referencing_symbols` | Pre-refactor check | Medium |
-| `insert_after_symbol` | Adding new methods | Low |
-| `replace_symbol_body` | Modifying code | Medium |
-| `rename_symbol` | Global renaming | Med-High |
-| `read_memory` | Retrieving context | Low |
-| `write_memory` | Storing insights | Low |

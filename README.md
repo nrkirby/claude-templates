@@ -1,17 +1,25 @@
 # Claude Templates
 
-The repository provides a series of scripts to help set up a tested configuration of Claude Code tools, including commands, skills, etc.
+> **WARNING: This project is designed for use in sandboxed environments only.**
+> It uses `--dangerously-skip-permissions` mode and relies on Claude Code's
+> sandbox to restrict filesystem, network, and command access. Do NOT use this
+> configuration on machines with production credentials, sensitive data, or
+> access to production systems. See [About Safety](#about-safety) for details.
 
-The aim of the repository is to use Claude Code in YOLO mode (`--dangerously-skip-permissions`) for a better agentic experience. All the configuration and safety guards are aimed to work with this mode enabled, although they can be used without the flag.
+A plugin marketplace providing tested skills, commands, agents, and MCP server configurations for Claude Code. Designed for YOLO mode (`--dangerously-skip-permissions`) with sandbox safety guards.
 
-**IMPORTANT:** I may modify this project while trying new approaches with Claude. This may break things. I recommend forking or obtaining a local copy for stability.
-
-### Quick Start
+## Quick Start
 
 ```bash
+# Install everything (marketplace, plugin, sandbox settings)
 ./install.sh
 
-./check-config.sh /path/to/your/repo
+# Add this alias to your shell config (~/.bashrc or ~/.zshrc)
+alias cl='SLASH_COMMAND_TOOL_CHAR_BUDGET=30000 claude --dangerously-skip-permissions'
+
+# In your project, initialise
+cl
+/ct:init
 ```
 
 ## About Safety
@@ -34,68 +42,61 @@ This means that the sandbox will protect you from some issues (a process reading
 
 ## Setup
 
-To use the project, run the command [install.sh](install.sh). This will configure your Claude instance with some extra plugins, commands, and other helpers. Use `--clean` for a fresh install when you want to remove stale configuration that might not be properly overridden. The `--dry-run` flag lets you preview what would be deleted before committing.
-
-After running the command, you will need to configure a couple of environment variables with your own keys, so that some MCP servers work.
-
-**NOTE**: For proper Serena MCP use with the programming language in your codebase, check [this list](https://oraios.github.io/serena/01-about/020_programming-languages.html) to see if you need a specific LSP available.
-
-### In a project
-
-When you want to work with Claude in a project, use [check-config.sh](check-config.sh) to verify it has all the necessary setup. It will list any changes needed for compliance with the assumptions in this configuration (more on this below).
-
-Once the checks report all is ready, navigate to the project folder and run `cl.sh` (a file added to your PATH by the setup step). This will start a Claude Code agent inside the sandbox, with the flag `--dangerously-skip-permissions` set.
-
-The first time you open a project, you should run `/ct:init` to properly initialise Claude and Serena. This will create some memories in Serena, like:
-- `project_overview` - Tech stack, architecture summary
-- `code_style_conventions` - Naming patterns, formatting rules
-- `suggested_commands` - Build, test, deploy commands
-
-For each new session, a hook will ensure that Serena initialises itself and loads relevant memories automatically.
-
-### Git Worktrees
-
-When using [git worktrees](https://git-scm.com/docs/git-worktree) for parallel development, gitignored files (like `.claude/`, `.serena/`, `.env`) are not shared between worktrees. Use `sync-worktree.sh` to copy these files:
+The [install.sh](install.sh) script installs the Claude Code plugin, sandbox settings, and marketplace configuration. Run it from the repository root:
 
 ```bash
-# From any directory
-./sync-worktree.sh ../feature-branch
-
-# Or with absolute path
-./sync-worktree.sh /path/to/worktree
+./install.sh
 ```
 
-The script:
-- Detects main worktree automatically
-- Shows preview of files to sync (new, identical, conflicts)
-- Prompts before overwriting existing files
-- Creates backups when overwriting conflicts
+Use `--clean` for a fresh install when you want to remove stale configuration that might not be properly overridden. The `--dry-run` flag lets you preview what would be deleted before committing.
 
-**Custom patterns**: Create `.worktreeinclude` in your project root to add patterns beyond the defaults (.claude/, .serena/, .env*, .envrc, .tool-versions, etc.).
+To reverse the installation, run [uninstall.sh](uninstall.sh).
 
-### Required configuration
+After installation, add the `cl` alias to your shell config (`~/.bashrc` or `~/.zshrc`):
 
-The following is assumed when working with a project:
+```bash
+alias cl='claude --dangerously-skip-permissions'
+```
 
-- There is a valid build bash script `buildAll.sh`. This script runs all relevant build steps: build, lint, test, security scan, formatting, etc. It will be used by Claude Code to verify changes work.
+### API Keys
 
-- Claude Code has autocompact disabled and sandbox enabled
+Some MCP servers (Perplexity, Tavily) require API keys. You can configure these via:
 
-- (Optional) Any environment keys needed by MCP (for example, Tavily) are present. If that is not the case, it is better to remove the MCP servers from `~/.claude.json`, to avoid them causing errors.
+- **mise** (recommended): Copy `mise.toml.example` to `mise.toml` in your project and fill in your keys. See [mise.jdx.dev](https://mise.jdx.dev/getting-started.html) for installation.
+- **Shell exports**: Add `export PERPLEXITY_API_KEY=...` and `export TAVILY_API_KEY=...` to your shell profile.
+
+MCP servers that require missing API keys will produce errors. If you do not plan to use them, this is safe to ignore.
+
+## In a Project
+
+When working with Claude in a project:
+
+1. Start Claude with `cl` (the alias configured above).
+2. On first use, run `/ct:init` to generate a project-specific `CLAUDE.md` with tech stack detection, code style conventions, and suggested build commands.
+3. See [Workflows.md](./Workflows.md) for detailed guidance on using commands, agents, and skills effectively.
+
+**Note:** The project instructions assume a `buildAll.sh` script exists that runs all relevant build steps (build, lint, test, formatting, etc.). Claude uses this script to verify changes work.
 
 ## Contents
 
 The repository has the following files:
 
-- **install.sh** - Main setup script that installs Claude Code, plugins, and dependencies system-wide (macOS/Linux).
-- **check-config.sh** - Validates that a project folder is properly configured for Claude Code usage, checking for required tools and optional API keys.
-- **sync-worktree.sh** - Syncs gitignored development files (.claude/, .serena/, .env*, etc.) from main worktree to target worktrees.
-- **bin/** - Executable directory containing cl.sh launcher script.
-- **.claude/** - Claude Code configuration directory containing instructions, MCP documentation, custom agents, skills, and slash commands.
-- **.mcp.json** - Default MCP server configuration.
-- **sandbox-settings.json** - Claude Code sandbox security configuration that blocks access to sensitive directories and environment files.
-- **[Claude_Capabilities.md](./Claude_Capabilities.md)** - Comprehensive guide to available commands, agents, skills, and tool integrations provided by this configuration.
-- **[Workflows.md](./Workflows.md)** - Recommended workflows for common tasks
+- **[install.sh](install.sh)** - Setup script (marketplace, plugin, sandbox settings)
+- **[uninstall.sh](uninstall.sh)** - Reverses install actions
+- **[plugins/ct/](plugins/ct/)** - The Claude Code plugin (skills, commands, agents, MCP)
+- **[templates/CLAUDE.md](templates/CLAUDE.md)** - Template project instructions
+- **[sandbox-settings.json](sandbox-settings.json)** - Sandbox security configuration
+- **[mise.toml.example](mise.toml.example)** - Environment variable template for API keys
+- **[Workflows.md](Workflows.md)** - Recommended workflows
+
+### Plugin Contents
+
+The `ct` plugin provides:
+
+- **Skills (12):** architecture-discipline, backend-reliability-enforcer, confidence-check, deployment-automation-enforcer, duplicate-code-detector, edge-case-discovery, frontend-production-quality, incremental-refactoring, meta-agent, performance-optimization, security-compliance-audit, threat-modeling
+- **Commands:** /ct:init, /ct:commit, /ct:research, /ct:discover-aliases, /ct:grammar-check, /ct:repo-index, and meta commands (skills-check, test-agent, test-all-skills, test-skill)
+- **Agents:** deep-research, pr-review-assistant, refactor-scan, repo-index
+- **MCP Servers:** Context7, Playwright, Perplexity, Tavily, shadcn
 
 ## Acknowledgements
 

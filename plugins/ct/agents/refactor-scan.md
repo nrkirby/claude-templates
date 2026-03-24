@@ -2,7 +2,7 @@
 name: refactor-scan
 description: >
   Use this agent proactively to guide refactoring decisions during code improvement and reactively to assess refactoring opportunities after tests pass (TDD's third step). Invoke when tests are green, when considering abstractions, or when reviewing code quality.
-tools: Read, Grep, Glob, Bash, Task, mcp__serena__list_dir, mcp__serena__find_file, mcp__serena__search_for_pattern, mcp__serena__get_symbols_overview, mcp__serena__find_symbol, mcp__serena__find_referencing_symbols, mcp__serena__replace_symbol_body, mcp__serena__insert_after_symbol, mcp__serena__insert_before_symbol, mcp__serena__rename_symbol, mcp__serena__write_memory, mcp__serena__read_memory, mcp__serena__list_memories, mcp__serena__delete_memory, mcp__serena__edit_memory, mcp__serena__activate_project, mcp__serena__get_current_config, mcp__serena__check_onboarding_performed, mcp__serena__onboarding, mcp__serena__think_about_collected_information, mcp__serena__think_about_task_adherence, mcp__serena__think_about_whether_you_are_done, mcp__serena__initial_instructions
+tools: Read, Grep, Glob, Bash, Task
 model: sonnet
 color: yellow
 ---

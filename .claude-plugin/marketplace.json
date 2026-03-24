@@ -1,0 +1,13 @@
+{
+  "plugins": {
+    "ct": {
+      "version": "1.0.0",
+      "description": "Claude Templates - Skills, commands, agents, and MCP servers for Claude Code with sandbox safety",
+      "source": {
+        "source": "github",
+        "repo": "pvillega/claude-templates",
+        "subdir": "plugins/ct"
+      }
+    }
+  }
+}
