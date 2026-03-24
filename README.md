@@ -10,12 +10,41 @@ A plugin marketplace providing tested skills, commands, agents, and MCP server c
 
 ## Quick Start
 
-```bash
-# Install everything (marketplace, plugin, sandbox settings)
-./install.sh
+### Option A: Full install (recommended)
 
+Clones the repo and runs the install script, which handles everything: marketplace registration, plugin installation, sandbox settings, and npm dependencies.
+
+```bash
+git clone https://github.com/pvillega/claude-templates.git
+cd claude-templates
+./install.sh
+```
+
+### Option B: Plugin only (manual)
+
+If you only want the plugin (skills, commands, agents, MCP servers) without the sandbox settings and npm packages:
+
+```bash
+# Add the marketplace
+claude plugin marketplace add pvillega/claude-templates
+
+# Install the ct plugin
+claude plugin install ct@claude-templates
+
+# Also install superpowers and playwright-skill (recommended)
+claude plugin marketplace add obra/superpowers-marketplace
+claude plugin install superpowers@superpowers-marketplace
+claude plugin marketplace add lackeyjb/playwright-skill
+claude plugin install playwright-skill@playwright-skill
+```
+
+**Note:** Option B does not configure sandbox settings or install global npm packages (jscpd). You will need to set those up separately if desired.
+
+### After install
+
+```bash
 # Add this alias to your shell config (~/.bashrc or ~/.zshrc)
-alias cl='SLASH_COMMAND_TOOL_CHAR_BUDGET=30000 claude --dangerously-skip-permissions'
+alias cl='claude --dangerously-skip-permissions'
 
 # In your project, initialise
 cl
