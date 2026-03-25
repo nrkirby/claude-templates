@@ -11,25 +11,15 @@
 # Script directory (for finding source files)
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# NPM packages to install globally
-readonly NPM_PACKAGES=(
-    "@anthropic-ai/claude-code"
-    "jscpd"
-)
+# Load shared configuration (TOOLS, SKILLS, MARKETPLACES, PLUGINS)
+# shellcheck source=config.sh
+source "$SCRIPT_DIR/config.sh"
 
-# Claude plugin marketplaces (format: "owner/repo:name")
-readonly MARKETPLACES=(
-    "pvillega/claude-templates:claude-templates"
-    "obra/superpowers-marketplace:superpowers-marketplace"
-    "lackeyjb/playwright-skill:playwright-skill"
-)
-
-# Claude plugins to install (format: "plugin@marketplace")
-readonly PLUGINS=(
-    "ct@claude-templates"
-    "superpowers@superpowers-marketplace"
-    "playwright-skill@playwright-skill"
-)
+# Load all tool scripts from tools/ directory
+for _tool_script in "$SCRIPT_DIR"/tools/*.sh; do
+    # shellcheck source=/dev/null
+    source "$_tool_script"
+done
 
 # ==============================================================================
 # GLOBAL STATE
@@ -101,6 +91,8 @@ print_summary() {
     echo "3. Verify setup: claude --version"
     echo ""
     echo "============================================"
+    echo ""
+    print_lsp_info
 }
 
 # Displays usage information
@@ -135,71 +127,6 @@ critical_error() {
 # ==============================================================================
 # SETUP FUNCTIONS
 # ==============================================================================
-
-# Installs jq JSON processor if not already present
-# Detects OS and uses appropriate package manager
-install_jq() {
-    echo "Checking for jq..."
-
-    if command -v jq &> /dev/null; then
-        echo "jq already installed: $(jq --version)"
-        return 0
-    fi
-
-    echo "jq not found. Installing jq..."
-    local os_type="$1"
-
-    if [ "$os_type" = "macos" ]; then
-        # macOS: use Homebrew
-        if ! command -v brew &> /dev/null; then
-            critical_error "Homebrew is required to install jq on macOS but is not installed. Please install Homebrew first: https://brew.sh"
-        fi
-        echo "Installing jq via Homebrew..."
-        if ! brew install jq; then
-            critical_error "Failed to install jq via Homebrew"
-        fi
-    else
-        # Linux: try package managers
-        if command -v apt-get &> /dev/null; then
-            echo "Installing jq via apt-get..."
-            if ! sudo apt-get update && sudo apt-get install -y jq; then
-                critical_error "Failed to install jq via apt-get"
-            fi
-        elif command -v dnf &> /dev/null; then
-            echo "Installing jq via dnf..."
-            if ! sudo dnf install -y jq; then
-                critical_error "Failed to install jq via dnf"
-            fi
-        elif command -v yum &> /dev/null; then
-            echo "Installing jq via yum..."
-            if ! sudo yum install -y jq; then
-                critical_error "Failed to install jq via yum"
-            fi
-        else
-            critical_error "Could not find a supported package manager (apt-get, dnf, or yum) to install jq. Please install jq manually."
-        fi
-    fi
-
-    # Verify jq installation
-    if ! command -v jq &> /dev/null; then
-        critical_error "jq installation appeared to succeed but jq command is still not available"
-    fi
-
-    echo "jq installed successfully"
-}
-
-# Installs npm global packages from NPM_PACKAGES array
-install_npm_packages() {
-    echo "Installing npm global packages..."
-
-    for package in "${NPM_PACKAGES[@]}"; do
-        echo "Installing $package..."
-        if ! npm install -g "$package"; then
-            critical_error "Failed to install $package"
-        fi
-        echo "$package installed successfully"
-    done
-}
 
 # Configures Claude plugin marketplaces from MARKETPLACES array
 # Attempts to update existing marketplaces, adds new ones if not found
@@ -246,24 +173,26 @@ install_plugins() {
     done
 }
 
-# Sets up the Playwright skill by running npm setup in its directory
-setup_playwright_skill() {
-    echo "Setting up Playwright skill..."
-    local playwright_dir
+# Installs skills globally via skills.sh CLI
+# Each skill can be aborted by the user; the loop continues with the next skill
+install_skills() {
+    echo "Installing skills via skills.sh..."
 
-    # Try known plugin cache locations
-    playwright_dir=$(find "$HOME/.claude/plugins" -type d -name "playwright-skill" -path "*/skills/*" 2>/dev/null | head -1)
-
-    if [ -n "$playwright_dir" ] && [ -d "$playwright_dir" ]; then
-        echo "Running npm setup in Playwright skill directory..."
-        if ! (cd "$playwright_dir" && npm run setup); then
-            add_warning "Failed to run npm setup for Playwright skill"
-        else
-            echo "Playwright skill setup completed"
-        fi
-    else
-        add_warning "Playwright skill directory not found, skipping npm setup. Run 'npm run setup' manually in the playwright-skill plugin directory."
+    if ! command -v npx &> /dev/null; then
+        add_warning "npx not found, skipping skills installation"
+        return 0
     fi
+
+    for skill in "${SKILLS[@]}"; do
+        echo ""
+        echo "Installing skill: $skill (global)..."
+        # shellcheck disable=SC2086
+        if ! npx skills add $skill -g --all; then
+            add_warning "Failed or skipped skill: $skill"
+        else
+            echo "Skill $skill installed successfully"
+        fi
+    done
 }
 
 # Copies templates/CLAUDE.md to ~/.claude/CLAUDE.md
@@ -287,9 +216,37 @@ copy_template_claude_md() {
     fi
 }
 
+# Deep merge jq filter: recursively merges objects, concatenates+deduplicates arrays
+# - Objects: recursively merged (keys from both sides kept)
+# - Arrays: concatenated with stable deduplication (no reordering)
+# - Scalars: overlay (second file) wins
+DEEP_MERGE_JQ='
+def uniq_stable:
+  reduce .[] as $x ([]; if any(.[]; . == $x) then . else . + [$x] end);
+def deepmerge:
+  .[0] as $a | .[1] as $b |
+  if ($a | type) == "object" and ($b | type) == "object" then
+    ([$a, $b] | map(keys) | add | unique) as $keys |
+    ($keys | map(. as $k |
+      if ($a | has($k)) and ($b | has($k)) then
+        {($k): ([$a[$k], $b[$k]] | deepmerge)}
+      elif ($b | has($k)) then
+        {($k): $b[$k]}
+      else
+        {($k): $a[$k]}
+      end
+    ) | add) // {}
+  elif ($a | type) == "array" and ($b | type) == "array" then
+    ($a + $b) | uniq_stable
+  else
+    $b
+  end;
+[.[0], .[1]] | deepmerge
+'
+
 # Merges JSON configuration files into ~/.claude.json and ~/.claude/settings.json
 # - Sets autoCompactEnabled in ~/.claude.json
-# - Merges sandbox-settings.json into ~/.claude/settings.json (recursive overwrite)
+# - Merges sandbox-settings.json into ~/.claude/settings.json (deep merge with array concatenation)
 merge_json_configs() {
     echo "Updating JSON configurations..."
 
@@ -323,15 +280,103 @@ merge_json_configs() {
         if ! jq empty "$SCRIPT_DIR/sandbox-settings.json" 2>/dev/null; then
             add_error "sandbox-settings.json is not valid JSON, skipping sandbox settings merge"
         else
-            # Perform recursive merge with overwrite semantics
-            # The * operator in jq performs a recursive merge where right-hand side overwrites left
-            if jq -s '.[0] * .[1]' "$HOME/.claude/settings.json" "$SCRIPT_DIR/sandbox-settings.json" > "$HOME/.claude/settings.json.tmp" && mv "$HOME/.claude/settings.json.tmp" "$HOME/.claude/settings.json"; then
-                echo "Sandbox settings merged successfully (existing keys overwritten)"
+            # Deep merge: objects are recursively merged, arrays are concatenated and deduplicated
+            if jq -s "$DEEP_MERGE_JQ" "$HOME/.claude/settings.json" "$SCRIPT_DIR/sandbox-settings.json" > "$HOME/.claude/settings.json.tmp" && mv "$HOME/.claude/settings.json.tmp" "$HOME/.claude/settings.json"; then
+                echo "Sandbox settings merged successfully (arrays concatenated, objects merged)"
             else
                 add_error "Failed to merge sandbox-settings.json into ~/.claude/settings.json"
             fi
         fi
     fi
+}
+
+# Adds shell alias export for Claude Code's SessionStart hook
+# Writes aliases to ~/.claude/shell-aliases.txt on every new shell
+configure_shell_alias_export() {
+    echo "Configuring shell alias export for Claude Code..."
+    local export_line='alias > ~/.claude/shell-aliases.txt 2>/dev/null'
+    local comment="# Export shell aliases for Claude Code (added by claude-templates install.sh)"
+
+    for rc_file in "$HOME/.bashrc" "$HOME/.zshrc"; do
+        if [ ! -f "$rc_file" ]; then
+            echo "  $rc_file does not exist, skipping"
+            continue
+        fi
+
+        if grep -qF 'alias > ~/.claude/shell-aliases.txt' "$rc_file"; then
+            echo "  Alias export already present in $rc_file, skipping"
+        else
+            echo "" >> "$rc_file"
+            echo "$comment" >> "$rc_file"
+            echo "$export_line" >> "$rc_file"
+            echo "  Added alias export to $rc_file"
+        fi
+    done
+
+    # Generate the file now so the current install works immediately
+    mkdir -p "$HOME/.claude"
+    alias > "$HOME/.claude/shell-aliases.txt" 2>/dev/null || true
+    echo "  Generated ~/.claude/shell-aliases.txt"
+}
+
+# Adds the 'cl' alias to ~/.bashrc and ~/.zshrc if not already present
+add_shell_alias() {
+    echo "Configuring shell alias..."
+    local alias_line="alias cl='SLASH_COMMAND_TOOL_CHAR_BUDGET=30000 claude --dangerously-skip-permissions'"
+    local added=false
+
+    for rc_file in "$HOME/.bashrc" "$HOME/.zshrc"; do
+        if [ ! -f "$rc_file" ]; then
+            echo "  $rc_file does not exist, skipping"
+            continue
+        fi
+
+        if grep -qF "alias cl=" "$rc_file"; then
+            echo "  Alias 'cl' already present in $rc_file, skipping"
+        else
+            echo "" >> "$rc_file"
+            echo "# Claude Code alias (added by claude-templates install.sh)" >> "$rc_file"
+            echo "$alias_line" >> "$rc_file"
+            echo "  Added 'cl' alias to $rc_file"
+            added=true
+        fi
+    done
+
+    if [ "$added" = true ]; then
+        echo ""
+        echo "  NOTE: Run 'source ~/.bashrc' (or ~/.zshrc) or open a new terminal for the alias to take effect."
+    fi
+}
+
+# Prints LSP plugin and language server installation reference
+print_lsp_info() {
+    echo "============================================"
+    echo "LSP INTEGRATION (optional)"
+    echo "============================================"
+    echo ""
+    echo "Claude Code supports Language Server Protocol for code intelligence"
+    echo "(go-to-definition, find-references, diagnostics, etc)."
+    echo ""
+    echo "Install the plugins and language servers for languages you use:"
+    echo ""
+    echo "  Language       Plugin Install                                                   Language Server Install"
+    echo "  -----------    -----------------------------------------------------------------  -----------------------------------------------"
+    echo "  TypeScript/JS  claude plugin install typescript-lsp@claude-plugins-official       npm install -g typescript-language-server typescript"
+    echo "  Python         claude plugin install pyright-lsp@claude-plugins-official          npm install -g pyright  (or: pip install pyright)"
+    echo "  Go             claude plugin install gopls-lsp@claude-plugins-official            go install golang.org/x/tools/gopls@latest"
+    echo "  Rust           claude plugin install rust-analyzer-lsp@claude-plugins-official    rustup component add rust-analyzer"
+    echo "  C/C++          claude plugin install clangd-lsp@claude-plugins-official           brew install llvm  (or: sudo apt install clangd)"
+    echo "  Java           claude plugin install jdtls-lsp@claude-plugins-official            brew install jdtls  (requires JDK 21+)"
+    echo "  C#             claude plugin install csharp-lsp@claude-plugins-official           dotnet tool install --global csharp-ls"
+    echo "  Ruby           claude plugin install ruby-lsp@claude-plugins-official             gem install ruby-lsp  (requires Ruby 3.0+)"
+    echo "  PHP            claude plugin install php-lsp@claude-plugins-official              npm install -g intelephense"
+    echo "  Kotlin         claude plugin install kotlin-lsp@claude-plugins-official           brew install kotlin-language-server"
+    echo "  Lua            claude plugin install lua-lsp@claude-plugins-official              brew install lua-language-server"
+    echo "  Swift          claude plugin install swift-lsp@claude-plugins-official            (included with Xcode or: brew install swift)"
+    echo ""
+    echo "After installing plugins, restart Claude Code for LSP servers to load."
+    echo "Verify with: check ~/.claude/debug/latest for 'Total LSP servers loaded: N'"
+    echo ""
 }
 
 # Prepares environment variable configuration instructions
@@ -349,8 +394,9 @@ Copy it and fill in your API keys:
 
 Alternatively, add these to your shell configuration (~/.bashrc or ~/.zshrc):
 
-  export PERPLEXITY_API_KEY=\"your-api-key-here\"
-  export TAVILY_API_KEY=\"your-api-key-here\""
+  export TAVILY_API_KEY=\"your-api-key-here\"
+
+Note: You can also authenticate Tavily via 'tvly login' instead of setting the environment variable."
 
     echo "Environment variable instructions prepared"
 }
@@ -569,21 +615,28 @@ case "$OS" in
 esac
 echo ""
 
-# Check npm prerequisites
+# Check prerequisites
 echo "Checking prerequisites..."
+if ! command -v curl &> /dev/null; then
+    critical_error "curl is required but not installed. Please install curl first."
+fi
+echo "curl found: $(curl --version | head -1)"
+
 if ! command -v npm &> /dev/null; then
     critical_error "npm is required but not installed. Please install Node.js and npm first."
 fi
 echo "npm found: $(npm --version)"
 echo ""
 
-# Install jq
-install_jq "$OS_TYPE"
+# Copy template CLAUDE.md (before tools, as tool installers may modify it)
+copy_template_claude_md
 echo ""
 
-# Install npm global packages
-install_npm_packages
-echo ""
+# Install CLI tools from TOOLS array
+for tool in "${TOOLS[@]}"; do
+    "install_${tool}" "$OS_TYPE"
+    echo ""
+done
 
 # Configure Claude plugin marketplaces
 configure_marketplaces
@@ -593,16 +646,20 @@ echo ""
 install_plugins
 echo ""
 
-# Set up Playwright skill
-setup_playwright_skill
+# Install skills via skills.sh
+install_skills
 echo ""
 
 # Update JSON configurations
 merge_json_configs
 echo ""
 
-# Copy template CLAUDE.md
-copy_template_claude_md
+# Configure shell alias export for Claude Code
+configure_shell_alias_export
+echo ""
+
+# Add shell alias
+add_shell_alias
 echo ""
 
 # Prepare environment variable instructions

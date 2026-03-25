@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+# Claude Templates Configuration
+# Shared constants used by install.sh and update.sh.
+
+# CLI tools to install (each entry maps to tools/<name>.sh with install_<name>/uninstall_<name> functions)
+readonly TOOLS=(
+    "claude_code"
+    "jq"
+    "gh"
+    "tavily"
+    "jscpd"
+    "playwright_cli"
+    "ctx7"
+)
+
+# Skills to install globally via skills.sh
+# Simple format: "owner/repo"
+# With flags:    "https://github.com/owner/repo --skill skill-name"
+readonly SKILLS=(
+    "https://github.com/microsoft/playwright-cli --skill playwright-cli"
+    "https://github.com/upstash/context7 --skill context7-cli"
+    "https://github.com/shadcn/ui --skill shadcn"
+    "https://github.com/tavily-ai/skills"
+    "coreyhaines31/marketingskills"
+)
+
+# Claude plugin marketplaces (format: "owner/repo:name")
+readonly MARKETPLACES=(
+    "pvillega/claude-templates:claude-templates"
+)
+
+# Claude plugins to install (format: "plugin@marketplace")
+readonly PLUGINS=(
+    "superpowers@claude-plugins-official"
+    "frontend-design@claude-plugins-official"
+    "code-review@claude-plugins-official"
+    "claude-md-management@claude-plugins-official"
+    "security-guidance@claude-plugins-official"
+    "commit-commands@claude-plugins-official"
+    "skill-creator@claude-plugins-official"
+    "claude-code-setup@claude-plugins-official"
+    "pr-review-toolkit@claude-plugins-official"
+    "ct@claude-templates"
+)
