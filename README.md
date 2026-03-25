@@ -1,77 +1,39 @@
 # Claude Templates
 
 > **WARNING: This project is designed for use in sandboxed environments only.**
-> It uses `--dangerously-skip-permissions` mode and relies on Claude Code's
-> sandbox to restrict filesystem, network, and command access. Do NOT use this
-> configuration on machines with production credentials, sensitive data, or
-> access to production systems. See [About Safety](#about-safety) for details.
 
-A plugin marketplace providing tested skills, commands, agents, and MCP server configurations for Claude Code. Designed for YOLO mode (`--dangerously-skip-permissions`) with sandbox safety guards.
+A curated setup for Claude Code combining **plugins** (from the Claude marketplace) and **skills** (from [skills.sh](https://skills.sh)) with sandbox safety guards. Designed for YOLO mode (`--dangerously-skip-permissions`).
 
 ## Quick Start
-
-### Option A: Full install (recommended)
-
-Clones the repo and runs the install script, which handles everything: marketplace registration, plugin installation, sandbox settings, and npm dependencies.
 
 ```bash
 git clone https://github.com/pvillega/claude-templates.git
 cd claude-templates
+
+# Installs plugins, skills, and default settings
 ./install.sh
-```
 
-### Option B: Plugin only (manual)
-
-If you only want the plugin (skills, commands, agents, MCP servers) without the sandbox settings and npm packages:
-
-```bash
-# Add the marketplace
-claude plugin marketplace add pvillega/claude-templates
-
-# Install the ct plugin
-claude plugin install ct@claude-templates
-
-# Also install superpowers and playwright-skill (recommended)
-claude plugin marketplace add obra/superpowers-marketplace
-claude plugin install superpowers@superpowers-marketplace
-claude plugin marketplace add lackeyjb/playwright-skill
-claude plugin install playwright-skill@playwright-skill
-```
-
-**Note:** Option B does not configure sandbox settings or install global npm packages (jscpd). You will need to set those up separately if desired.
-
-### After install
-
-```bash
-# Add this alias to your shell config (~/.bashrc or ~/.zshrc)
-alias cl='claude --dangerously-skip-permissions'
-
-# In your project, initialise
+# Run Claude (added as an alias to your ~/.bashrc or ~/.zshrc)
 cl
-/ct:init
+```
+
+If you do not use Bash or Zsh, you can set up the alias manually:
+
+```bash
+alias cl='SLASH_COMMAND_TOOL_CHAR_BUDGET=30000 claude --dangerously-skip-permissions'
 ```
 
 ## About Safety
 
 Using agents without restrictions on tools poses some dangers. It could impact files outside your workspace, potentially damaging your system. Or it can [exfiltrate](https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/) data.
 
-As a consequence, using Claude Code from your local environment by itself is risky. Currently, there are three popular ways of using Claude Code to combat these issues:
+As a consequence, using Claude Code from your local environment by itself is risky. At this point in time there are multiple alternatives, so this template doesn't enforce any preferences.
 
-- [DevContainers](https://containers.dev): these sandbox the codebase and agent in a Docker container. This safeguards your computer if you do not use privileged mode or mount external volumes. Restricting traffic can be more complicated, depending on your needs. They can be used in [GitHub Codespaces](https://github.com/features/codespaces) for extra isolation. The downside is that you need to re-authenticate on each new container, and they take a long time to start. Not ideal if you want to use many branches in parallel.
-- [Claude Code for Web](https://claude.com/blog/claude-code-on-the-web): it provides an isolated sandbox environment to run your code, and reads your local `.claude` folder. It doesn't support `plugins` and doesn't work well with `mcp`, unless you have them deployed remotely via some gateway.
-- [Claude Code for Desktop](https://code.claude.com/docs/en/desktop): it provides an isolated sandbox environment to run your code, using a worktree to isolate changes from the code, and it runs on your local machine. This means that it reads your `~/.claude` folder and settings.
-- A [Sandbox runtime](https://github.com/anthropic-experimental/sandbox-runtime): like the linked one, this is an experimental tool provided by Anthropic. It provides the advantages of using a container, without the drawbacks. Unfortunately, this tool is not fully compatible with Claude as it stands, because it denies file operations to `/dev/ttys*`, breaking `raw mode` necessary for Claude Code.
-- Use [Claude Sandbox](https://code.claude.com/docs/en/sandboxing), which is a more limited version of the [Sandbox runtime](https://github.com/anthropic-experimental/sandbox-runtime), but it is provided by Claude itself.
-
-This project uses the `Claude Sandbox` approach. Ideally, we could use the full sandbox but, as mentioned, it is not compatible with Claude Code. The advantage of doing this is that it also seamlessly works for [Claude Code for Desktop](https://code.claude.com/docs/en/desktop), as they will share configuration.
-
-Please note this approach mitigates some risks, but not all. `Claude Sandbox` doesn't restrict domains by whitelisting, unlike some of the alternatives. Use of Docker, MCPs, and third-party libraries means there is a risk of data exfiltration if they are compromised. Claude can still read your environment variables and share keys.
-
-This means that the sandbox will protect you from some issues (a process reading your SSH configuration or AWS credentials on disk), but good practices are still necessary: do not use production credentials or data in your development environments. Do not use unknown or unsafe Docker images. Do not run random MCP servers.
+What it does, though, it to restrict very dangerous commands (like `git push --force`)
 
 ## Setup
 
-The [install.sh](install.sh) script installs the Claude Code plugin, sandbox settings, and marketplace configuration. Run it from the repository root:
+The [install.sh](install.sh) script installs plugins, skills, sandbox settings, and marketplace configuration. Run it from the repository root:
 
 ```bash
 ./install.sh
@@ -79,53 +41,96 @@ The [install.sh](install.sh) script installs the Claude Code plugin, sandbox set
 
 Use `--clean` for a fresh install when you want to remove stale configuration that might not be properly overridden. The `--dry-run` flag lets you preview what would be deleted before committing.
 
-To reverse the installation, run [uninstall.sh](uninstall.sh).
-
-After installation, add the `cl` alias to your shell config (`~/.bashrc` or `~/.zshrc`):
+To update all installed plugins and skills to their latest versions:
 
 ```bash
-alias cl='claude --dangerously-skip-permissions'
+./update.sh
 ```
 
 ### API Keys
 
-Some MCP servers (Perplexity, Tavily) require API keys. You can configure these via:
+Tavily requires an API key. You can configure it via:
 
-- **mise** (recommended): Copy `mise.toml.example` to `mise.toml` in your project and fill in your keys. See [mise.jdx.dev](https://mise.jdx.dev/getting-started.html) for installation.
-- **Shell exports**: Add `export PERPLEXITY_API_KEY=...` and `export TAVILY_API_KEY=...` to your shell profile.
+- **Tavily CLI login** (recommended): Run `tvly login` to authenticate, no environment variable needed.
+- **Shell export**: Add `export TAVILY_API_KEY=...` to your shell profile.
 
-MCP servers that require missing API keys will produce errors. If you do not plan to use them, this is safe to ignore.
+## Plugins
 
-## In a Project
+Plugins are installed from the [Claude marketplace](https://claude.com/plugins). They provide commands, agents, skills, and MCP server configurations.
 
-When working with Claude in a project:
+| Plugin | Description | Trigger |
+|--------|-------------|---------|
+| [Superpowers](https://claude.com/plugins/superpowers) | Structured software development: TDD, debugging, brainstorming, subagent code review | `/brainstorming`, `/execute-plan` |
+| [Frontend Design](https://claude.com/plugins/frontend-design) | Generates production-grade frontend interfaces with bold aesthetic choices | Automatic |
+| [Code Review](https://claude.com/plugins/code-review) | PR analysis with five specialized agents checking compliance, bugs, and git history | `/code-review` |
+| [CLAUDE.md Management](https://claude.com/plugins/claude-md-management) | Audits and improves CLAUDE.md files, captures learnings from sessions | `audit my CLAUDE.md`, `/revise-claude-md` |
+| [Security Guidance](https://claude.com/plugins/security-guidance) | Warns about security vulnerabilities when editing files (injection, XSS, etc.) | Automatic (pre-tool hook) |
+| [Skill Creator](https://claude.com/plugins/skill-creator) | Create, evaluate, improve, and benchmark skills | `/skill-creator` |
+| [Commit Commands](https://claude.com/plugins/commit-commands) | Automates commit messages, pushing, and PR creation with style analysis | `/commit`, `/commit-push-pr` |
+| [Claude Code Setup](https://claude.com/plugins/claude-code-setup) | Recommends tailored automations (MCP servers, skills, hooks, subagents) | `recommend automations for this project` |
+| [PR Review Toolkit](https://claude.com/plugins/pr-review-toolkit) | Code quality analysis with six specialized agents for comments, tests, types, etc. | Natural language PR review requests |
 
-1. Start Claude with `cl` (the alias configured above).
-2. On first use, run `/ct:init` to generate a project-specific `CLAUDE.md` with tech stack detection, code style conventions, and suggested build commands.
-3. See [Workflows.md](./Workflows.md) for detailed guidance on using commands, agents, and skills effectively.
+Additionally, the **ct** plugin (from this repo) provides specific skills, agents, and commands.
 
-**Note:** The project instructions assume a `buildAll.sh` script exists that runs all relevant build steps (build, lint, test, formatting, etc.). Claude uses this script to verify changes work.
+## Skills
 
-## Contents
+Skills are installed globally from [skills.sh](https://skills.sh) using the `skills` CLI. They provide reusable capabilities that enhance Claude's behavior.
 
-The repository has the following files:
+| Skill | Description | Trigger |
+|-------|-------------|---------|
+| [playwright-cli](https://skills.sh/microsoft/playwright-cli/playwright-cli) | Browser automation with 40+ commands for navigation, interaction, form filling, and web testing | `playwright-cli open`, `playwright-cli goto <url>` |
+| [context7-cli](https://skills.sh/upstash/context7/context7-cli) | Fetches up-to-date library documentation and manages AI coding skills | `ctx7 library <name> <query>`, `ctx7 docs <id> <query>` |
+| [shadcn](https://skills.sh/shadcn/ui/shadcn) | Manages shadcn/ui components: search registries, add components, view docs, preview changes | Component lifecycle commands |
+| [tavily-ai/skills](https://skills.sh/tavily-ai/skills) | Collection of 11 skills: search, research, extract, crawl, map, and best practices for Tavily web search | `search`, `research`, `extract`, `crawl` |
+| [marketingskills](https://skills.sh/coreyhaines31/marketingskills) | Collection of 33 marketing skills: SEO audit, copywriting, content strategy, pricing, analytics, ads, email sequences, CRO, and more | Skill-specific triggers (e.g., `seo-audit`, `copywriting`) |
 
-- **[install.sh](install.sh)** - Setup script (marketplace, plugin, sandbox settings)
-- **[uninstall.sh](uninstall.sh)** - Reverses install actions
-- **[plugins/ct/](plugins/ct/)** - The Claude Code plugin (skills, commands, agents, MCP)
+Skills are installed globally (`-g`) so they are available in all projects. To add more skills, edit the `SKILLS` array in [install.sh](install.sh) or install manually:
+
+```bash
+npx skills add <owner/repo> -g --all
+```
+
+Browse available skills at [skills.sh](https://skills.sh).
+
+## LSP Integration
+
+Claude Code supports Language Server Protocol for code intelligence (go-to-definition, find-references, diagnostics, etc.). **This is highly recommended** for effective code navigation and analysis.
+
+Install the plugin and language server for each language you use:
+
+| Language | Plugin Install | Language Server Install |
+|----------|---------------|------------------------|
+| TypeScript/JS | `claude plugin install typescript-lsp@claude-plugins-official` | `npm install -g typescript-language-server typescript` |
+| Python | `claude plugin install pyright-lsp@claude-plugins-official` | `npm install -g pyright` |
+| Go | `claude plugin install gopls-lsp@claude-plugins-official` | `go install golang.org/x/tools/gopls@latest` |
+| Rust | `claude plugin install rust-analyzer-lsp@claude-plugins-official` | `rustup component add rust-analyzer` |
+| C/C++ | `claude plugin install clangd-lsp@claude-plugins-official` | `brew install llvm` (or `sudo apt install clangd`) |
+| Java | `claude plugin install jdtls-lsp@claude-plugins-official` | `brew install jdtls` (requires JDK 21+) |
+| C# | `claude plugin install csharp-lsp@claude-plugins-official` | `dotnet tool install --global csharp-ls` |
+| Ruby | `claude plugin install ruby-lsp@claude-plugins-official` | `gem install ruby-lsp` (requires Ruby 3.0+) |
+| PHP | `claude plugin install php-lsp@claude-plugins-official` | `npm install -g intelephense` |
+| Kotlin | `claude plugin install kotlin-lsp@claude-plugins-official` | `brew install kotlin-language-server` |
+| Lua | `claude plugin install lua-lsp@claude-plugins-official` | `brew install lua-language-server` |
+| Swift | `claude plugin install swift-lsp@claude-plugins-official` | Included with Xcode (or `brew install swift`) |
+
+After installing, restart Claude Code. Verify with: check `~/.claude/debug/latest` for `Total LSP servers loaded: N`.
+
+## Shell Alias Awareness
+
+A `SessionStart` hook in `~/.claude/settings.json` automatically loads your shell aliases into Claude's context at the start of every session. This prevents issues where Claude uses a command (e.g., `grep`) that is aliased to a different tool (e.g., `rg`) with incompatible flags.
+
+The `install.sh` script adds a line to your `~/.bashrc` and/or `~/.zshrc` that exports aliases to `~/.claude/shell-aliases.txt` on every new shell. The hook then reads this file at session start.
+
+**If you use a different shell** (fish, nushell, etc.), add the equivalent of `alias > ~/.claude/shell-aliases.txt` to your shell's config file so the aliases are kept up to date.
+
+## Other Contents
+
+- **[install.sh](install.sh)** - Setup script (marketplace, plugins, skills, sandbox settings)
+- **[update.sh](update.sh)** - Updates all installed plugins, skills, and npm packages
+- **[plugins/ct/](plugins/ct/)** - The local Claude Code plugin (skills, commands, agents)
 - **[templates/CLAUDE.md](templates/CLAUDE.md)** - Template project instructions
 - **[sandbox-settings.json](sandbox-settings.json)** - Sandbox security configuration
 - **[mise.toml.example](mise.toml.example)** - Environment variable template for API keys
-- **[Workflows.md](Workflows.md)** - Recommended workflows
-
-### Plugin Contents
-
-The `ct` plugin provides:
-
-- **Skills (12):** architecture-discipline, backend-reliability-enforcer, confidence-check, deployment-automation-enforcer, duplicate-code-detector, edge-case-discovery, frontend-production-quality, incremental-refactoring, meta-agent, performance-optimization, security-compliance-audit, threat-modeling
-- **Commands:** /ct:init, /ct:commit, /ct:research, /ct:discover-aliases, /ct:grammar-check, /ct:repo-index, and meta commands (skills-check, test-agent, test-all-skills, test-skill)
-- **Agents:** deep-research, pr-review-assistant, refactor-scan, repo-index
-- **MCP Servers:** Context7, Playwright, Perplexity, Tavily, shadcn
 
 ## Acknowledgements
 
@@ -133,4 +138,3 @@ This repository was inspired by and incorporates patterns from:
 
 - **[SuperClaude Framework](https://github.com/SuperClaude-Org/SuperClaude_Framework)**: A comprehensive framework for enhanced Claude Code capabilities
 - **[Superpowers](https://github.com/obra/superpowers/)**: A comprehensive skills library of proven techniques, patterns, and workflows for AI coding assistants
-- **[ClaudeLog](https://claudelog.com)**: Community-driven best practices and patterns

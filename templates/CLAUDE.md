@@ -62,7 +62,7 @@ Sequential dispatch when tasks have dependencies.
 ## Code Quality
 
 After code changes:
-1. Run `buildAll.sh` -> verify build and tests pass
+1. verify build and tests and lint pass
 2. Resolve ALL issues found
 
 ## Skills Integration

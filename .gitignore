@@ -11,3 +11,9 @@ mise.toml
 TODO.md
 docs/plans/
 specs/
+
+# Skill eval artifacts
+**/iteration-*/
+**/test-fixture/
+*-workspace/
+report/
