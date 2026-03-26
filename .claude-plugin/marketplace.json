@@ -1,13 +1,20 @@
 {
-  "plugins": {
-    "ct": {
+  "name": "claude-templates",
+  "description": "Claude Templates marketplace - Skills, commands, and agents for Claude Code",
+  "owner": {
+    "name": "pvillega",
+    "email": "pere.villega@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "ct",
       "version": "1.0.0",
       "description": "Claude Templates - Skills, commands, and agents for Claude Code with sandbox safety",
       "source": {
-        "source": "github",
-        "repo": "pvillega/claude-templates",
-        "subdir": "plugins/ct"
+        "source": "git-subdir",
+        "url": "https://github.com/pvillega/claude-templates",
+        "path": "plugins/ct"
       }
     }
-  }
+  ]
 }
