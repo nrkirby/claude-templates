@@ -51,7 +51,7 @@ To update all installed plugins and skills to their latest versions:
 
 Tavily requires an API key. You can configure it via:
 
-- **Tavily CLI login** (recommended): Run `tvly login` to authenticate, no environment variable needed.
+- **Tavily CLI login** (recommended): Run `tvly login --api-key $(echo $TAVILY_API_KEY)` to authenticate using your API key.
 - **Shell export**: Add `export TAVILY_API_KEY=...` to your shell profile.
 
 ## Plugins
@@ -98,6 +98,8 @@ Claude Code supports Language Server Protocol for code intelligence (go-to-defin
 
 Install the plugin and language server for each language you use:
 
+### Official Plugins (claude-plugins-official)
+
 | Language | Plugin Install | Language Server Install |
 |----------|---------------|------------------------|
 | TypeScript/JS | `claude plugin install typescript-lsp@claude-plugins-official` | `npm install -g typescript-language-server typescript` |
@@ -112,6 +114,24 @@ Install the plugin and language server for each language you use:
 | Kotlin | `claude plugin install kotlin-lsp@claude-plugins-official` | `brew install kotlin-language-server` |
 | Lua | `claude plugin install lua-lsp@claude-plugins-official` | `brew install lua-language-server` |
 | Swift | `claude plugin install swift-lsp@claude-plugins-official` | Included with Xcode (or `brew install swift`) |
+
+### Community / Third-Party Plugins
+
+These languages have LSP servers but no official Claude plugin. Use third-party marketplaces or community plugins instead.
+
+| Language | Plugin Source | Language Server Install | Notes |
+|----------|-------------|------------------------|-------|
+| Scala | [Piebald-AI/claude-code-lsps](https://github.com/Piebald-AI/claude-code-lsps) (Metals) | `cs install metals` | Requires [Coursier](https://get-coursier.io): `brew install coursier/formulas/coursier && cs setup`. JDK 11+ needed. |
+| Haskell | [m4dc4p/claude-hls](https://github.com/m4dc4p/claude-hls) (community) | `ghcup install hls` | Requires [GHCup](https://www.haskell.org/ghcup/): `curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org \| sh`. HLS must match your GHC version. |
+| OCaml | [Piebald-AI/claude-code-lsps](https://github.com/Piebald-AI/claude-code-lsps) or [boostvolt/claude-code-lsps](https://github.com/boostvolt/claude-code-lsps) | `opam install ocaml-lsp-server` | Requires [opam](https://opam.ocaml.org): `brew install opam && opam init`. Install in the same opam switch as your project. |
+| Unison | No plugin available yet | `brew install unisonweb/unison/ucm` | LSP is built into UCM. Run `ucm lsp` to start the language server. Feature coverage is still evolving. |
+
+To use third-party marketplaces, add them first:
+
+```bash
+claude plugin marketplace add Piebald-AI/claude-code-lsps
+claude plugin marketplace add boostvolt/claude-code-lsps
+```
 
 After installing, restart Claude Code. Verify with: check `~/.claude/debug/latest` for `Total LSP servers loaded: N`.
 
