@@ -3,6 +3,8 @@
 # jq JSON processor - install and uninstall functions
 # Requires: OS_TYPE variable set to "macos" or "linux"
 # Requires: critical_error, add_warning functions from parent script
+# Note: Linux package manager commands (apt-get, dnf, yum) may require elevated
+# privileges. Run the installer with appropriate permissions if needed.
 
 install_jq() {
     echo "Checking for jq..."
@@ -26,17 +28,17 @@ install_jq() {
     else
         if command -v apt-get &> /dev/null; then
             echo "Installing jq via apt-get..."
-            if ! (sudo apt-get update && sudo apt-get install -y jq); then
+            if ! (apt-get update && apt-get install -y jq); then
                 critical_error "Failed to install jq via apt-get"
             fi
         elif command -v dnf &> /dev/null; then
             echo "Installing jq via dnf..."
-            if ! sudo dnf install -y jq; then
+            if ! dnf install -y jq; then
                 critical_error "Failed to install jq via dnf"
             fi
         elif command -v yum &> /dev/null; then
             echo "Installing jq via yum..."
-            if ! sudo yum install -y jq; then
+            if ! yum install -y jq; then
                 critical_error "Failed to install jq via yum"
             fi
         else
@@ -69,11 +71,11 @@ update_jq() {
         fi
     else
         if command -v apt-get &> /dev/null; then
-            sudo apt-get update && sudo apt-get install --only-upgrade -y jq 2>/dev/null || add_warning "Failed to update jq via apt-get"
+            apt-get update && apt-get install --only-upgrade -y jq 2>/dev/null || add_warning "Failed to update jq via apt-get"
         elif command -v dnf &> /dev/null; then
-            sudo dnf upgrade -y jq 2>/dev/null || add_warning "Failed to update jq via dnf"
+            dnf upgrade -y jq 2>/dev/null || add_warning "Failed to update jq via dnf"
         elif command -v yum &> /dev/null; then
-            sudo yum upgrade -y jq 2>/dev/null || add_warning "Failed to update jq via yum"
+            yum upgrade -y jq 2>/dev/null || add_warning "Failed to update jq via yum"
         else
             add_warning "Cannot update jq: no supported package manager found"
         fi
@@ -100,11 +102,11 @@ uninstall_jq() {
         fi
     else
         if command -v apt-get &> /dev/null; then
-            sudo apt-get remove -y jq 2>/dev/null || add_warning "Failed to uninstall jq via apt-get"
+            apt-get remove -y jq 2>/dev/null || add_warning "Failed to uninstall jq via apt-get"
         elif command -v dnf &> /dev/null; then
-            sudo dnf remove -y jq 2>/dev/null || add_warning "Failed to uninstall jq via dnf"
+            dnf remove -y jq 2>/dev/null || add_warning "Failed to uninstall jq via dnf"
         elif command -v yum &> /dev/null; then
-            sudo yum remove -y jq 2>/dev/null || add_warning "Failed to uninstall jq via yum"
+            yum remove -y jq 2>/dev/null || add_warning "Failed to uninstall jq via yum"
         else
             add_warning "Cannot uninstall jq: no supported package manager found"
         fi

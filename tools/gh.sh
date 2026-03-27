@@ -3,6 +3,8 @@
 # GitHub CLI (gh) - install and uninstall functions
 # Requires: OS_TYPE variable set to "macos" or "linux"
 # Requires: critical_error, add_warning functions from parent script
+# Note: Linux package manager commands (apt-get, dnf, yum) may require elevated
+# privileges. Run the installer with appropriate permissions if needed.
 
 install_gh() {
     echo "Checking for GitHub CLI (gh)..."
@@ -26,25 +28,25 @@ install_gh() {
     else
         if command -v apt-get &> /dev/null; then
             echo "Installing gh via apt-get..."
-            if ! (sudo mkdir -p /etc/apt/keyrings \
-                && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
-                && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-                && sudo apt-get update \
-                && sudo apt-get install -y gh); then
+            if ! (mkdir -p /etc/apt/keyrings \
+                && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
+                && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+                && apt-get update \
+                && apt-get install -y gh); then
                 critical_error "Failed to install gh via apt-get"
             fi
         elif command -v dnf &> /dev/null; then
             echo "Installing gh via dnf..."
-            if ! (sudo dnf install -y 'dnf-command(config-manager)' \
-                && sudo dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo \
-                && sudo dnf install -y gh); then
+            if ! (dnf install -y 'dnf-command(config-manager)' \
+                && dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo \
+                && dnf install -y gh); then
                 critical_error "Failed to install gh via dnf"
             fi
         elif command -v yum &> /dev/null; then
             echo "Installing gh via yum..."
-            if ! (sudo yum install -y yum-utils \
-                && sudo yum-config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo \
-                && sudo yum install -y gh); then
+            if ! (yum install -y yum-utils \
+                && yum-config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo \
+                && yum install -y gh); then
                 critical_error "Failed to install gh via yum"
             fi
         else
@@ -77,11 +79,11 @@ update_gh() {
         fi
     else
         if command -v apt-get &> /dev/null; then
-            sudo apt-get update && sudo apt-get install --only-upgrade -y gh 2>/dev/null || add_warning "Failed to update gh via apt-get"
+            apt-get update && apt-get install --only-upgrade -y gh 2>/dev/null || add_warning "Failed to update gh via apt-get"
         elif command -v dnf &> /dev/null; then
-            sudo dnf upgrade -y gh 2>/dev/null || add_warning "Failed to update gh via dnf"
+            dnf upgrade -y gh 2>/dev/null || add_warning "Failed to update gh via dnf"
         elif command -v yum &> /dev/null; then
-            sudo yum upgrade -y gh 2>/dev/null || add_warning "Failed to update gh via yum"
+            yum upgrade -y gh 2>/dev/null || add_warning "Failed to update gh via yum"
         else
             add_warning "Cannot update gh: no supported package manager found"
         fi
@@ -108,11 +110,11 @@ uninstall_gh() {
         fi
     else
         if command -v apt-get &> /dev/null; then
-            sudo apt-get remove -y gh 2>/dev/null || add_warning "Failed to uninstall gh via apt-get"
+            apt-get remove -y gh 2>/dev/null || add_warning "Failed to uninstall gh via apt-get"
         elif command -v dnf &> /dev/null; then
-            sudo dnf remove -y gh 2>/dev/null || add_warning "Failed to uninstall gh via dnf"
+            dnf remove -y gh 2>/dev/null || add_warning "Failed to uninstall gh via dnf"
         elif command -v yum &> /dev/null; then
-            sudo yum remove -y gh 2>/dev/null || add_warning "Failed to uninstall gh via yum"
+            yum remove -y gh 2>/dev/null || add_warning "Failed to uninstall gh via yum"
         else
             add_warning "Cannot uninstall gh: no supported package manager found"
         fi

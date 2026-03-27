@@ -3,6 +3,8 @@
 # fd - fast find alternative (https://github.com/sharkdp/fd)
 # Requires: OS_TYPE variable set to "macos" or "linux"
 # Requires: critical_error, add_warning functions from parent script
+# Note: Linux package manager commands (apt-get, dnf, yum) may require elevated
+# privileges. Run the installer with appropriate permissions if needed.
 
 install_fd() {
     echo "Checking for fd..."
@@ -26,22 +28,22 @@ install_fd() {
     else
         if command -v apt-get &> /dev/null; then
             echo "Installing fd via apt-get..."
-            if ! (sudo apt-get update && sudo apt-get install -y fd-find); then
+            if ! (apt-get update && apt-get install -y fd-find); then
                 critical_error "Failed to install fd via apt-get"
             fi
             # On Debian/Ubuntu the binary is 'fdfind' to avoid conflict with fdclone
             if ! command -v fd &> /dev/null && command -v fdfind &> /dev/null; then
                 echo "Creating symlink: fd -> fdfind"
-                sudo ln -sf "$(which fdfind)" /usr/local/bin/fd
+                ln -sf "$(which fdfind)" /usr/local/bin/fd
             fi
         elif command -v dnf &> /dev/null; then
             echo "Installing fd via dnf..."
-            if ! sudo dnf install -y fd-find; then
+            if ! dnf install -y fd-find; then
                 critical_error "Failed to install fd via dnf"
             fi
         elif command -v yum &> /dev/null; then
             echo "Installing fd via yum..."
-            if ! sudo yum install -y fd-find; then
+            if ! yum install -y fd-find; then
                 critical_error "Failed to install fd via yum"
             fi
         else
@@ -107,11 +109,11 @@ update_fd() {
         fi
     else
         if command -v apt-get &> /dev/null; then
-            sudo apt-get update && sudo apt-get install --only-upgrade -y fd-find 2>/dev/null || add_warning "Failed to update fd via apt-get"
+            apt-get update && apt-get install --only-upgrade -y fd-find 2>/dev/null || add_warning "Failed to update fd via apt-get"
         elif command -v dnf &> /dev/null; then
-            sudo dnf upgrade -y fd-find 2>/dev/null || add_warning "Failed to update fd via dnf"
+            dnf upgrade -y fd-find 2>/dev/null || add_warning "Failed to update fd via dnf"
         elif command -v yum &> /dev/null; then
-            sudo yum upgrade -y fd-find 2>/dev/null || add_warning "Failed to update fd via yum"
+            yum upgrade -y fd-find 2>/dev/null || add_warning "Failed to update fd via yum"
         else
             add_warning "Cannot update fd: no supported package manager found"
         fi
@@ -139,14 +141,14 @@ uninstall_fd() {
     else
         # Remove symlink if we created one
         if [ -L /usr/local/bin/fd ]; then
-            sudo rm -f /usr/local/bin/fd
+            rm -f /usr/local/bin/fd
         fi
         if command -v apt-get &> /dev/null; then
-            sudo apt-get remove -y fd-find 2>/dev/null || add_warning "Failed to uninstall fd via apt-get"
+            apt-get remove -y fd-find 2>/dev/null || add_warning "Failed to uninstall fd via apt-get"
         elif command -v dnf &> /dev/null; then
-            sudo dnf remove -y fd-find 2>/dev/null || add_warning "Failed to uninstall fd via dnf"
+            dnf remove -y fd-find 2>/dev/null || add_warning "Failed to uninstall fd via dnf"
         elif command -v yum &> /dev/null; then
-            sudo yum remove -y fd-find 2>/dev/null || add_warning "Failed to uninstall fd via yum"
+            yum remove -y fd-find 2>/dev/null || add_warning "Failed to uninstall fd via yum"
         else
             add_warning "Cannot uninstall fd: no supported package manager found"
         fi
