@@ -126,7 +126,7 @@ Install the plugin and language server for each language you use:
 | Python | `claude plugin install pyright-lsp@claude-plugins-official` | `npm install -g pyright` |
 | Go | `claude plugin install gopls-lsp@claude-plugins-official` | `go install golang.org/x/tools/gopls@latest` |
 | Rust | `claude plugin install rust-analyzer-lsp@claude-plugins-official` | `rustup component add rust-analyzer` |
-| C/C++ | `claude plugin install clangd-lsp@claude-plugins-official` | `brew install llvm` (or `apt install clangd`) |
+| C/C++ | `claude plugin install clangd-lsp@claude-plugins-official` | `brew install llvm` (or `sudo apt install clangd`) |
 | Java | `claude plugin install jdtls-lsp@claude-plugins-official` | `brew install jdtls` (requires JDK 21+) |
 | C# | `claude plugin install csharp-lsp@claude-plugins-official` | `dotnet tool install --global csharp-ls` |
 | Ruby | `claude plugin install ruby-lsp@claude-plugins-official` | `gem install ruby-lsp` (requires Ruby 3.0+) |

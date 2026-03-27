@@ -3,9 +3,6 @@
 # ripgrep - fast grep alternative (https://github.com/BurntSushi/ripgrep)
 # Requires: OS_TYPE variable set to "macos" or "linux"
 # Requires: critical_error, add_warning functions from parent script
-# Note: Linux package manager commands (apt-get, dnf, yum) may require elevated
-# privileges. Run the installer with appropriate permissions if needed.
-
 install_rg() {
     echo "Checking for rg..."
 
@@ -28,17 +25,17 @@ install_rg() {
     else
         if command -v apt-get &> /dev/null; then
             echo "Installing ripgrep via apt-get..."
-            if ! (apt-get update && apt-get install -y ripgrep); then
+            if ! (sudo apt-get update && sudo apt-get install -y ripgrep); then
                 critical_error "Failed to install ripgrep via apt-get"
             fi
         elif command -v dnf &> /dev/null; then
             echo "Installing ripgrep via dnf..."
-            if ! dnf install -y ripgrep; then
+            if ! sudo dnf install -y ripgrep; then
                 critical_error "Failed to install ripgrep via dnf"
             fi
         elif command -v yum &> /dev/null; then
             echo "Installing ripgrep via yum..."
-            if ! yum install -y ripgrep; then
+            if ! sudo yum install -y ripgrep; then
                 critical_error "Failed to install ripgrep via yum"
             fi
         else
@@ -104,11 +101,11 @@ update_rg() {
         fi
     else
         if command -v apt-get &> /dev/null; then
-            apt-get update && apt-get install --only-upgrade -y ripgrep 2>/dev/null || add_warning "Failed to update ripgrep via apt-get"
+            sudo apt-get update && sudo apt-get install --only-upgrade -y ripgrep 2>/dev/null || add_warning "Failed to update ripgrep via apt-get"
         elif command -v dnf &> /dev/null; then
-            dnf upgrade -y ripgrep 2>/dev/null || add_warning "Failed to update ripgrep via dnf"
+            sudo dnf upgrade -y ripgrep 2>/dev/null || add_warning "Failed to update ripgrep via dnf"
         elif command -v yum &> /dev/null; then
-            yum upgrade -y ripgrep 2>/dev/null || add_warning "Failed to update ripgrep via yum"
+            sudo yum upgrade -y ripgrep 2>/dev/null || add_warning "Failed to update ripgrep via yum"
         else
             add_warning "Cannot update ripgrep: no supported package manager found"
         fi
@@ -135,11 +132,11 @@ uninstall_rg() {
         fi
     else
         if command -v apt-get &> /dev/null; then
-            apt-get remove -y ripgrep 2>/dev/null || add_warning "Failed to uninstall ripgrep via apt-get"
+            sudo apt-get remove -y ripgrep 2>/dev/null || add_warning "Failed to uninstall ripgrep via apt-get"
         elif command -v dnf &> /dev/null; then
-            dnf remove -y ripgrep 2>/dev/null || add_warning "Failed to uninstall ripgrep via dnf"
+            sudo dnf remove -y ripgrep 2>/dev/null || add_warning "Failed to uninstall ripgrep via dnf"
         elif command -v yum &> /dev/null; then
-            yum remove -y ripgrep 2>/dev/null || add_warning "Failed to uninstall ripgrep via yum"
+            sudo yum remove -y ripgrep 2>/dev/null || add_warning "Failed to uninstall ripgrep via yum"
         else
             add_warning "Cannot uninstall ripgrep: no supported package manager found"
         fi

@@ -396,7 +396,7 @@ print_lsp_info() {
     echo "  Python         claude plugin install pyright-lsp@claude-plugins-official          npm install -g pyright  (or: pip install pyright)"
     echo "  Go             claude plugin install gopls-lsp@claude-plugins-official            go install golang.org/x/tools/gopls@latest"
     echo "  Rust           claude plugin install rust-analyzer-lsp@claude-plugins-official    rustup component add rust-analyzer"
-    echo "  C/C++          claude plugin install clangd-lsp@claude-plugins-official           brew install llvm  (or: apt install clangd)"
+    echo "  C/C++          claude plugin install clangd-lsp@claude-plugins-official           brew install llvm  (or: sudo apt install clangd)"
     echo "  Java           claude plugin install jdtls-lsp@claude-plugins-official            brew install jdtls  (requires JDK 21+)"
     echo "  C#             claude plugin install csharp-lsp@claude-plugins-official           dotnet tool install --global csharp-ls"
     echo "  Ruby           claude plugin install ruby-lsp@claude-plugins-official             gem install ruby-lsp  (requires Ruby 3.0+)"
