@@ -9,6 +9,7 @@ readonly TOOLS=(
     "jq"
     "fd"
     "rg"
+    "rtk"
     "gh"
     "tavily"
     "jscpd"
