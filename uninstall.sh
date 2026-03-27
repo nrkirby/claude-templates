@@ -246,6 +246,25 @@ remove_shell_alias() {
     done
 }
 
+# Removes the find=fd alias from shell RC files
+remove_find_alias() {
+    echo "Removing find -> fd alias..."
+
+    for rc_file in "$HOME/.bashrc" "$HOME/.zshrc"; do
+        if [ ! -f "$rc_file" ]; then
+            continue
+        fi
+
+        if grep -qF "alias find='fd'" "$rc_file"; then
+            # Remove the alias line and its comment
+            sed -i.bak '/# Use fd as find replacement (added by claude-templates install.sh)/d' "$rc_file"
+            sed -i.bak "/alias find='fd'/d" "$rc_file"
+            rm -f "${rc_file}.bak"
+            echo "  Removed find alias from $rc_file"
+        fi
+    done
+}
+
 warn_settings_json() {
     if [ -f "$HOME/.claude/settings.json" ]; then
         add_warning "~/.claude/settings.json contains sandbox/permission settings merged by install.sh. These cannot be safely auto-removed. Please review manually."
@@ -338,6 +357,10 @@ echo ""
 
 # Remove shell alias
 remove_shell_alias
+echo ""
+
+# Remove find -> fd alias
+remove_find_alias
 echo ""
 
 # Warn about things that need manual review
