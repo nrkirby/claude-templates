@@ -54,6 +54,39 @@ install_fd() {
     fi
 
     echo "fd installed successfully: $(fd --version)"
+
+    # Configure find -> fd alias in shell RC files
+    echo "Configuring find -> fd alias..."
+    local alias_line="alias find='fd'"
+    local alias_added=false
+
+    for rc_file in "$HOME/.bashrc" "$HOME/.zshrc"; do
+        if [ ! -f "$rc_file" ]; then
+            echo "  $rc_file does not exist, skipping"
+            continue
+        fi
+
+        if grep -qF "alias find=" "$rc_file"; then
+            echo "  Alias 'find' already present in $rc_file, skipping"
+        else
+            echo "" >> "$rc_file"
+            echo "# Use fd as find replacement (added by claude-templates install.sh)" >> "$rc_file"
+            echo "$alias_line" >> "$rc_file"
+            echo "  Added 'find' alias to $rc_file"
+            alias_added=true
+        fi
+    done
+
+    if [ "$alias_added" = true ]; then
+        echo ""
+        echo "  NOTE: Run 'source ~/.bashrc' (or ~/.zshrc) or open a new terminal for the alias to take effect."
+    fi
+
+    # Message for other shells
+    echo ""
+    echo "  For other shells (fish, nushell, etc.), add the equivalent alias manually:"
+    echo "    fish:    alias find fd; funcsave find"
+    echo "    nushell: alias find = fd  (add to config.nu)"
 }
 
 update_fd() {
@@ -118,6 +151,21 @@ uninstall_fd() {
             add_warning "Cannot uninstall fd: no supported package manager found"
         fi
     fi
+
+    # Remove find -> fd alias from shell RC files
+    echo "Removing find -> fd alias..."
+    for rc_file in "$HOME/.bashrc" "$HOME/.zshrc"; do
+        if [ ! -f "$rc_file" ]; then
+            continue
+        fi
+
+        if grep -qF "alias find='fd'" "$rc_file"; then
+            sed -i.bak '/# Use fd as find replacement (added by claude-templates install.sh)/d' "$rc_file"
+            sed -i.bak "/alias find='fd'/d" "$rc_file"
+            rm -f "${rc_file}.bak"
+            echo "  Removed find alias from $rc_file"
+        fi
+    done
 
     echo "fd removal complete"
 }
