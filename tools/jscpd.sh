@@ -4,14 +4,7 @@
 # Requires: critical_error, add_warning functions from parent script
 
 _npm_install_jscpd() {
-    if npm install -g jscpd@latest 2>/dev/null; then
-        return 0
-    fi
-    echo "Retrying with sudo..."
-    if sudo npm install -g jscpd@latest; then
-        return 0
-    fi
-    return 1
+    npm install -g jscpd@latest
 }
 
 install_jscpd() {
@@ -49,7 +42,7 @@ uninstall_jscpd() {
     echo "Removing jscpd..."
 
     if ! npm uninstall -g jscpd 2>/dev/null; then
-        sudo npm uninstall -g jscpd 2>/dev/null || add_warning "Failed to uninstall jscpd"
+        add_warning "Failed to uninstall jscpd"
     fi
 
     echo "jscpd removal complete"

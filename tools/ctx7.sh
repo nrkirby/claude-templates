@@ -4,14 +4,7 @@
 # Requires: critical_error, add_warning functions from parent script
 
 _npm_install_ctx7() {
-    if npm install -g ctx7@latest 2>/dev/null; then
-        return 0
-    fi
-    echo "Retrying with sudo..."
-    if sudo npm install -g ctx7@latest; then
-        return 0
-    fi
-    return 1
+    npm install -g ctx7@latest
 }
 
 install_ctx7() {
@@ -49,7 +42,7 @@ uninstall_ctx7() {
     echo "Removing ctx7..."
 
     if ! npm uninstall -g ctx7 2>/dev/null; then
-        sudo npm uninstall -g ctx7 2>/dev/null || add_warning "Failed to uninstall ctx7"
+        add_warning "Failed to uninstall ctx7"
     fi
 
     echo "ctx7 removal complete"
