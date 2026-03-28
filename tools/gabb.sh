@@ -31,14 +31,12 @@ install_gabb() {
         add_warning "Failed to register Gabb MCP server. Run manually: claude mcp add --scope user gabb -- gabb mcp-server"
     fi
 
-    # Interactive setup — user must run manually
+    # Run interactive setup so user configures workspace immediately
     echo ""
-    echo "  ╔═══════════════════════════════════════════════════════════════╗"
-    echo "  ║  IMPORTANT: Run 'gabb setup' to configure your workspace.   ║"
-    echo "  ║  This is an interactive command that must be run manually.   ║"
-    echo "  ╚═══════════════════════════════════════════════════════════════╝"
-    echo ""
-    add_warning "Run 'gabb setup' manually to complete Gabb configuration (interactive)"
+    echo "Running gabb setup (interactive)..."
+    if ! gabb setup; then
+        add_warning "gabb setup failed or was cancelled. Run 'gabb setup' manually to complete configuration."
+    fi
 }
 
 update_gabb() {
