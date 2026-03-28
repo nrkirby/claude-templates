@@ -97,16 +97,17 @@ The installer sets up the following CLI tools, used by Claude Code for enhanced 
 | Tool | Description | Install Method |
 |------|-------------|----------------|
 | [Claude Code](https://claude.ai) | Anthropic's AI coding assistant | Native installer |
-| [jq](https://jqlang.github.io/jq/) | JSON processor for config merging | Homebrew / apt / dnf / yum |
-| [fd](https://github.com/sharkdp/fd) | Fast `find` alternative (aliased as `find`) | Homebrew / apt / dnf / yum |
-| [ripgrep](https://github.com/BurntSushi/ripgrep) | Fast `grep` alternative (aliased as `grep`) | Homebrew / apt / dnf / yum |
-| [rtk](https://github.com/rtk-ai/rtk) | Token-optimized CLI proxy (60-90% savings) | Homebrew / install script |
-| [gh](https://cli.github.com/) | GitHub CLI for PR/issue management | Homebrew / apt / dnf / yum |
+| [jq](https://jqlang.github.io/jq/) | JSON processor for config merging | Homebrew |
+| [fd](https://github.com/sharkdp/fd) | Fast `find` alternative (aliased as `find`) | Homebrew |
+| [ripgrep](https://github.com/BurntSushi/ripgrep) | Fast `grep` alternative (aliased as `grep`) | Homebrew |
+| [rtk](https://github.com/rtk-ai/rtk) | Token-optimized CLI proxy (60-90% savings) | Homebrew |
+| [gh](https://cli.github.com/) | GitHub CLI for PR/issue management | Homebrew |
 | [Tavily CLI](https://cli.tavily.com/) | AI-optimized web search | Native installer |
 | [jscpd](https://github.com/kucherenko/jscpd) | Copy/paste detection | npm |
 | [Context7 CLI](https://github.com/upstash/context7) | Library documentation fetcher | npm |
 | [agent-browser](https://github.com/vercel-labs/agent-browser) | AI-first browser automation (50+ commands) | npm + browser install |
-| [Engram](https://github.com/Gentleman-Programming/engram) | Persistent memory for AI agents (SQLite + FTS5) | Homebrew / GitHub releases |
+| [Engram](https://github.com/Gentleman-Programming/engram) | Persistent memory for AI agents (SQLite + FTS5) | Homebrew |
+| [Gabb](https://github.com/gabb-software/gabb-cli) | Local code indexer for semantic code understanding (MCP server) | Homebrew |
 
 Tools are configured in the `TOOLS` array in [config.sh](config.sh). Each tool has an install, update, and uninstall script in the [tools/](tools/) directory.
 
