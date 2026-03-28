@@ -670,6 +670,20 @@ if ! command -v npm &> /dev/null; then
     critical_error "npm is required but not installed. Please install Node.js and npm first."
 fi
 echo "npm found: $(npm --version)"
+
+if ! command -v brew &> /dev/null; then
+    echo ""
+    echo "ERROR: Homebrew is required but not installed."
+    echo ""
+    echo "Install Homebrew:"
+    echo "  macOS:  /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+    echo "  Linux:  /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+    echo ""
+    echo "For Linux details, see: https://docs.brew.sh/Homebrew-on-Linux"
+    echo ""
+    critical_error "Homebrew (brew) is required but not installed. See instructions above."
+fi
+echo "brew found: $(brew --version | head -1)"
 echo ""
 
 # Copy template CLAUDE.md (before tools, as tool installers may modify it)

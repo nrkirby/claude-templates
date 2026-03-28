@@ -23,6 +23,23 @@ If you do not use Bash or Zsh, you can set up the alias manually:
 alias cl='SLASH_COMMAND_TOOL_CHAR_BUDGET=30000 claude --dangerously-skip-permissions'
 ```
 
+### Prerequisites
+
+The installer requires the following to be available before running:
+
+- **curl** — for downloading installers
+- **npm** — for installing Node.js-based tools and skills
+- **[Homebrew](https://brew.sh)** — package manager for CLI tools (macOS and Linux)
+
+Homebrew is available on both macOS and Linux. To install:
+
+```bash
+# macOS and Linux
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+For Linux-specific instructions, see [Homebrew on Linux](https://docs.brew.sh/Homebrew-on-Linux).
+
 ## About Safety
 
 Using agents without restrictions on tools poses some dangers. It could impact files outside your workspace, potentially damaging your system. Or it can [exfiltrate](https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/) data.
