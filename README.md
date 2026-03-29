@@ -88,7 +88,30 @@ Plugins are installed from the [Claude marketplace](https://claude.com/plugins).
 | [PR Review Toolkit](https://claude.com/plugins/pr-review-toolkit) | Code quality analysis with six specialized agents for comments, tests, types, etc. | Natural language PR review requests |
 | [Engram](https://github.com/Gentleman-Programming/engram) | Persistent memory for AI coding agents — survives session ends and compactions via SQLite + FTS5 | `mem_save`, `mem_search`, `mem_context` (MCP tools) |
 
-Additionally, the **ct** plugin (from this repo) provides specific skills, agents, and commands.
+Additionally, the **ct** plugin (from this repo) provides custom skills and agents:
+
+### ct Skills
+
+| Skill | Description | Trigger |
+|-------|-------------|---------|
+| bugmagnet | Systematic test coverage analysis and edge case discovery using a comprehensive checklist | `"find holes in my tests"`, `"what could go wrong"`, `"edge cases"` |
+| fix-loop | Iterative review-fix cycle: runs code-reviewer, fixes critical findings, verifies tests, repeats until clean (max 5 iterations) | `"review and fix"`, `"find and fix bugs"` |
+| duplicate-code-detector | Detects copy-paste duplication in codebases | Automatic |
+| incremental-refactoring | Guided refactoring in small, testable steps | Refactoring tasks |
+| performance-optimization | Performance analysis and optimization guidance | Performance tasks |
+| threat-modeling | STRIDE-based threat modeling for security analysis | Security review tasks |
+
+### ct Agents
+
+| Agent | Description |
+|-------|-------------|
+| code-reviewer | Autonomous code review agent focused on seeking disconfirmation — analyses for best practices, security, performance, FP patterns, and test coverage gaps. Invokes bugmagnet for edge case discovery. |
+| fixer | Applies targeted minimal fixes for critical code review findings, verifies tests pass, reverts on failure. Used by the fix-loop skill. |
+| code-simplifier | Reviews code for simplification opportunities |
+| deep-research | Deep codebase research and analysis |
+| refactor-scan | Scans for refactoring opportunities |
+
+Some skills and agents were adapted from [channingwalton/dotfiles](https://github.com/channingwalton/dotfiles).
 
 ## CLI Tools
 
@@ -199,3 +222,5 @@ This repository was inspired by and incorporates patterns from:
 
 - **[SuperClaude Framework](https://github.com/SuperClaude-Org/SuperClaude_Framework)**: A comprehensive framework for enhanced Claude Code capabilities
 - **[Superpowers](https://github.com/obra/superpowers/)**: A comprehensive skills library of proven techniques, patterns, and workflows for AI coding assistants
+- **[channingwalton/dotfiles](https://github.com/channingwalton/dotfiles)**: Code review, fixer, and fix-loop agent/skill patterns
+- **[gojko/bugmagnet-ai-assistant](https://github.com/gojko/bugmagnet-ai-assistant)**: Edge case discovery and test coverage gap analysis methodology (bugmagnet skill)
