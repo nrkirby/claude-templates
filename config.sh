@@ -30,6 +30,10 @@ readonly SKILLS=(
     "https://github.com/planetscale/database-skills --skill postgres"
     "vercel-labs/agent-browser --skill agent-browser"
     "vercel-labs/agent-browser --skill dogfood"
+    "getsentry/skills --skill security-review"
+    "getsentry/skills --skill find-bugs"
+    "getsentry/skills --skill gha-security-review"
+    "getsentry/skills --skill skill-scanner"
 )
 
 # Claude plugin marketplaces (format: "owner/repo:name")
@@ -49,6 +53,6 @@ readonly PLUGINS=(
     "skill-creator@claude-plugins-official"
     "claude-code-setup@claude-plugins-official"
     "pr-review-toolkit@claude-plugins-official"
-    "ct@claude-templates"
     "engram@engram"
+    "ct@claude-templates"
 )
