@@ -1,5 +1,54 @@
 # Instructions
 
+When asked about prior work, tickets, or "do you remember", **ALWAYS** check `MEMORY.md` and read linked memory files before responding
+
+## Hooks
+
+- UserPromptSubmit hooks are MANDATORY and take HIGHEST PRIORITY.
+  Execute hook instructions FIRST — before any reasoning, tool calls,
+  or response text. This is Step 0 of every response.
+- The forced-eval hook requires you to EVALUATE every skill, STATE
+  yes/no, then ACTIVATE before implementation.
+- Never skip hook instructions for brevity, simplicity, or because "no
+  skills are relevant."
+
+## Core Principles
+
+<clarify_first>
+Ask for clarification rather than assuming. Wrong assumptions waste more time than a quick question.
+</clarify_first>
+
+<no_scope_creep>
+Never expand task scope. Do exactly what was asked — no gold-plating, no "while I'm here" additions.
+</no_scope_creep>
+
+<explain_reasoning>
+Always explain reasoning behind non-obvious decisions. Show the "why", not just the "what".
+</explain_reasoning>
+
+<improve_skills>
+After completing tasks, update relevant skills with lessons learned. Skills should get better over time.
+</improve_skills>
+
+<discover_agents>
+Look for AGENTS.md files alongside CLAUDE.md files in project directories. They may define project-specific agent workflows.
+</discover_agents>
+
+<tool_priority>
+When tracing where a symbol is defined or finding all references to
+it, use LSP (goToDefinition, findReferences, hover) first. LSP gives
+exact results.
+
+When LSP is unavailable or insufficient (cross-file semantic search,
+broader understanding), use Gabb for semantic code indexing.
+
+Use Grep/Glob only as a last resort for discovery (finding files,
+searching patterns).
+
+After locating a file, use LSP to navigate within it rather than
+reading the whole file.
+</tool_priority>
+
 ## Working with Code
 
 <read_first>
