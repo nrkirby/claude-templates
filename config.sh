@@ -34,6 +34,9 @@ readonly SKILLS=(
     "getsentry/skills --skill find-bugs"
     "getsentry/skills --skill gha-security-review"
     "getsentry/skills --skill skill-scanner"
+    "https://github.com/kepano/obsidian-skills --skill obsidian-cli"
+    "https://github.com/kepano/obsidian-skills --skill obsidian-markdown"
+    "https://github.com/kepano/obsidian-skills --skill defuddle"
 )
 
 # Claude plugin marketplaces (format: "owner/repo:name")

@@ -147,6 +147,13 @@ Skills are installed globally from [skills.sh](https://skills.sh) using the `ski
 | [postgres](https://skills.sh/planetscale/database-skills/postgres) | PostgreSQL database management, queries, schema design, and optimization | Database-related tasks |
 | [agent-browser](https://skills.sh/vercel-labs/agent-browser/agent-browser) | AI-first browser automation for navigation, form filling, screenshots, and data extraction | `agent-browser open <url>`, `agent-browser snapshot` |
 | [dogfood](https://skills.sh/vercel-labs/agent-browser/dogfood) | Internal testing skill for agent-browser | Automatic |
+| [security-review](https://skills.sh/getsentry/skills/security-review) | Security-focused code review | Security review tasks |
+| [find-bugs](https://skills.sh/getsentry/skills/find-bugs) | Bug detection and analysis | Bug hunting tasks |
+| [gha-security-review](https://skills.sh/getsentry/skills/gha-security-review) | GitHub Actions security review | GHA workflow tasks |
+| [skill-scanner](https://skills.sh/getsentry/skills/skill-scanner) | Scans and evaluates installed skills | Skill management tasks |
+| [obsidian-cli](https://skills.sh/kepano/obsidian-skills/obsidian-cli) | Obsidian vault interaction via the official CLI (v1.12+) — file ops, search, daily notes, tags, properties, sync | `obsidian` CLI tasks |
+| [obsidian-markdown](https://skills.sh/kepano/obsidian-skills/obsidian-markdown) | Obsidian-flavored markdown conventions — wiki links, callouts, embeds, block references | Writing Obsidian markdown |
+| [defuddle](https://skills.sh/kepano/obsidian-skills/defuddle) | Clean content extraction from web pages using Obsidian's web clipper engine | Web content extraction |
 
 Skills are installed globally (`-g`) so they are available in all projects. To add more skills, edit the `SKILLS` array in [config.sh](config.sh) or install manually:
 
