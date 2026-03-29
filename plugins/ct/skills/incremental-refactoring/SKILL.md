@@ -1,74 +1,88 @@
 ---
 name: incremental-refactoring
 description: >
-  Use when IMPLEMENTING refactoring changes. Enforces metrics-driven protocol with before/after measurements. Triggers on implement refactor, apply refactoring pattern, clean up code smell, extract method, move method. No exceptions for simple refactorings - use this. NOTE - If you need to FIND duplicates first, use duplicate-code-detector, then return here for implementation.
+  Use when the user asks to refactor, clean up, restructure, extract methods,
+  reduce complexity, or improve code structure without changing behavior.
+  Triggers on: extract method, move function, simplify conditional, reduce
+  nesting, split class. To FIND duplicates first, use duplicate-code-detector
+  then return here. Not for features, bugs, or performance.
 ---
 
 # Incremental Refactoring
 
-## Workflow Clarification: Detection vs Implementation
+**Read [guide.md](guide.md) before starting.** Contains the refactoring catalog, examples, and techniques.
 
-This skill is for **IMPLEMENTATION** (applying refactoring patterns). If you don't yet know what to refactor:
-- Use `duplicate-code-detector` first to identify duplication targets
-- Then return here to implement the changes
+## Two-Phase Workflow
 
-**Sequential workflow:**
-1. `duplicate-code-detector` → Find and prioritize targets (if needed)
-2. `incremental-refactoring` → Implement changes with metrics (this skill)
+```dot
+digraph refactoring {
+    "Analyze code" -> "Prioritize (80/20)";
+    "Prioritize (80/20)" -> "Present HIGH/MED/LOW findings";
+    "Present HIGH/MED/LOW findings" -> "STOP. End your response. Wait for user approval." [style=bold];
+    "STOP. End your response. Wait for user approval." -> "Pick ONE transformation" [label="user approves"];
+    "Pick ONE transformation" -> "Apply it";
+    "Apply it" -> "Verify (tests/types)";
+    "Verify (tests/types)" -> "Commit";
+    "Commit" -> "STOP. End your response. Ask what's next." [style=bold];
+    "STOP. End your response. Ask what's next." -> "Pick ONE transformation" [label="user says continue"];
+    "STOP. End your response. Ask what's next." -> "Done" [label="user says stop"];
+}
+```
 
-## MANDATORY FIRST STEP
+## Phase 1: Analysis ONLY
 
-**TodoWrite:** Create 10+ items (2 per step)
-1. Baseline metrics (complexity, duplication, coverage)
-2. Select ONE refactoring pattern
-3. Apply transformation atomically
-4. Validate preservation (tests, linter, metrics)
-5. Document + commit
+1. Read [guide.md](guide.md) for smells and catalog
+2. Scan for smells (long functions, duplication, deep nesting, unclear names, god classes)
+3. **80/20 prioritize** -- few refactorings, highest impact. Stop at diminishing returns
+4. Present smells classified as HIGH / MEDIUM / LOW. Do NOT pre-plan execution order
 
-**This skill is MANDATORY for any refactoring work.**
+**HARD STOP: End your response after presenting the analysis. Do NOT continue to Phase 2 in the same message. Do NOT show code changes, proposed extractions, or "here's what I would do" previews. The user must explicitly approve before you touch any code.**
 
----
+## Phase 2: Refactoring (one transformation per cycle)
 
-## 5-Step Process
+Only enter Phase 2 after the user has responded with approval.
 
-### 1. Baseline Metrics (BEFORE changes)
-- Cyclomatic complexity: ___
-- Maintainability index: ___
-- Duplication %: ___
-- Test coverage: ___%
+5. Pick ONE transformation from guide.md catalog
+6. Apply it
+7. Verify: run tests, check types, or explain why before/after are equivalent
+8. Commit (single transformation per commit)
 
-### 2. Select ONE Pattern
-Pick ONE per iteration (Extract Method, Move Method, Replace Conditional with Polymorphism, Introduce Parameter Object, etc.)
+**HARD STOP: End your response after each transformation. Ask the user if they want to continue, adjust direction, or stop. Do NOT batch multiple transformations in one response.**
 
-### 3. Apply Transformation
-- ONE small change
-- Preserve existing behavior exactly
-- **No new features during refactoring**
+9. Decide next step from observation of current state, not from an upfront plan
+10. Stop when high-impact items are done -- perfect code is not the goal
 
-### 4. Validate Preservation (MANDATORY)
-- [ ] ALL tests pass (zero changes)
-- [ ] Tests fail → **Revert immediately** (no debugging during refactoring)
-- [ ] Re-measure complexity → improvement %
-- [ ] Linter/type checker pass
+## When NOT to Refactor
 
-### 5. Document Change
-- Pattern applied + rationale
-- Before/after metrics
-- Commit with descriptive message
+- Code that rarely changes and works fine (stability > aesthetics)
+- Low-impact cosmetic improvements
+- Code with unclear requirements (wrong abstraction risk)
+- When the user needs a feature, bug fix, or rewrite
 
----
+**"Ugly" is not sufficient reason if the code is stable, tested, and rarely touched.**
 
-## Response Templates
+## Quick Reference
 
-**"Big rewrite is faster"**
-> 80% of big rewrites fail or get abandoned. Incremental refactoring delivers value continuously, reduces risk, and keeps tests green. Which specific smell are we addressing first?
+| Smell | Transformation | guide.md |
+|-------|---------------|----------|
+| Long function (>50 lines) | Extract Method | Yes |
+| Duplicated code | Extract Method, Unify | Yes |
+| Deep nesting (>3 levels) | Guard Clauses | Yes |
+| Unclear name | Rename | Yes |
+| Complex expression | Extract Variable | Yes |
+| Code in wrong file | Move Function | Yes |
+| Loop does too much | Split Loop | Yes |
 
----
+## Red Flags -- STOP If You Think Any of These
 
-## Red Flags
-
-| Thought | Reality |
-|---------|---------|
-| "I'll refactor multiple patterns at once" | Can't isolate what breaks |
-| "Tests are slow, I'll skip for now" | 60% chance you break behavior |
-| "Mix refactor + new feature" | Can't revert cleanly when it fails |
+| Thought | Correct Response |
+|---------|-----------------|
+| "I'll extract all 6 methods at once" | ONE transformation, verify, commit, then next |
+| "I'll refactor while adding this feature" | Separate. Refactor first OR feature first. Never both |
+| "This is ugly, I should clean it up" | Does it change often? Causing bugs? If no, push back |
+| "Let me plan all steps upfront" | Plan only the next step. Observe after each |
+| "I'll show what I would do so they can approve" | That IS doing it. Present analysis, STOP, wait |
+| "I'll present all cycles for review" | One cycle per response. User controls the pace |
+| "Tests are slow, I'll batch verifications" | Verify after EVERY transformation |
+| "I'll just do a quick rename too" | Second transformation. Commit the first one first |
+| "User said refactor so I should refactor everything" | 80/20. Stop at diminishing returns |
