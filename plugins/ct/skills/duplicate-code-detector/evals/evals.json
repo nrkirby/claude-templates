@@ -1,0 +1,54 @@
+{
+  "skill_name": "duplicate-code-detector",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Hey, I've got this TypeScript monorepo at /tmp/test-monorepo with about 12 services. We've been copy-pasting utility functions between services for months and I'm pretty sure there's a ton of duplicated code. The project already has a .jscpd.json config with min-lines set to 15 and custom ignore patterns. Can you scan for duplicates and tell me what to fix first?",
+      "expected_output": "Should check for .jscpd.json config, respect it (not override with hardcoded flags), use --gitignore flag, use --output to file, extract metrics via jq, cap results to top 10, classify duplicates as exact/near/structural, rank by impact score, and present findings with config info.",
+      "files": [],
+      "expectations": [
+        "Checks for existing .jscpd.json config file before running jscpd",
+        "Does NOT override project config with hardcoded --min-lines or --min-tokens flags",
+        "Passes --gitignore flag to jscpd",
+        "Directs jscpd output to a file (--output) rather than relying on console",
+        "Uses jq or similar to extract and cap results rather than loading full JSON",
+        "Caps analyzed groups to 10 or fewer",
+        "Classifies duplicates using exact/near/structural terminology",
+        "Ranks priorities by impact score (lines x instances)",
+        "Presents findings with config info and scan path"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I need to check for duplicated code in my Python/Go project at /tmp/polyglot-repo but I'm on a minimal container — no npm, no node, jscpd isn't available. Can you still find duplicate code?",
+      "expected_output": "Should detect jscpd is unavailable, fall back to grep-based approach using ripgrep or grep, communicate limitations to user (exact matches only), use appropriate flags for gitignore respect, and still attempt to rank and present findings.",
+      "files": [],
+      "expectations": [
+        "Detects that jscpd is not available and triggers fallback",
+        "Uses ripgrep (rg) or grep -rn as fallback detection method",
+        "Tells the user upfront about limitations (exact matches only, no near/structural)",
+        "Respects .gitignore (via rg default behavior or grep --exclude-dir)",
+        "Caps output to avoid flooding context",
+        "Still attempts to rank findings by impact",
+        "Recommends installing jscpd for comprehensive detection"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Just ran jscpd on our codebase at /tmp/classification-test and got the JSON report. I see three main duplicate groups: one where two files have identical 50-line database setup functions, another where two HTTP handlers are almost the same except for variable names, and a third where three files all do validate-then-transform-then-persist but with totally different fields. How should I think about refactoring these?",
+      "expected_output": "Should classify each group correctly (exact/near/structural), assign appropriate refactoring patterns, rank by impact score, and generate a TDD refactoring plan for each.",
+      "files": [],
+      "expectations": [
+        "Classifies the identical database setup as Exact",
+        "Classifies the HTTP handlers with variable name differences as Near",
+        "Classifies the validate-transform-persist pattern as Structural",
+        "Assigns Extract Function pattern to the Exact duplicate",
+        "Assigns Parameterization pattern to the Near duplicate",
+        "Assigns Template Method or Strategy pattern to the Structural duplicate",
+        "Ranks by impact score: structural first (50x3=150 > 50x2=100 > near 50x2=100)",
+        "Includes TDD steps in the refactoring plan",
+        "Offers handoff to incremental-refactoring skill"
+      ]
+    }
+  ]
+}

@@ -1,130 +1,196 @@
 ---
 name: duplicate-code-detector
 description: >
-  Runs jscpd static analysis to find duplicated and copy-pasted code with precise metrics (duplication percentages, line counts, clone groups) that cannot be derived by reading files manually. TRIGGER when the user mentions any of these words or concepts - duplicated, duplicate, copy-paste, copy-pasted, copied code, code clones, repeated code, similar code across files, same code in multiple places, overlapping implementations, code quality audit, code smells, technical debt involving repeated or duplicated code, or refactoring preparation where identifying duplication targets comes first. This includes cross-language or cross-platform duplication checks, CI duplication warnings, and any request to scan or analyze a codebase for redundancy. DO NOT TRIGGER when user wants to implement refactoring changes (use incremental-refactoring instead), fix a specific bug, write tests, add features, or do code review.
+  Use when the user mentions duplicated code, copy-paste, code clones, repeated code, similar code across files, overlapping implementations, code quality audit, code smells, technical debt involving duplication, or refactoring preparation. Also for cross-language duplication checks, CI duplication warnings, and codebase redundancy scans. DO NOT TRIGGER for implementing refactoring (use incremental-refactoring), fixing bugs, writing tests, adding features, or code review.
 ---
 
 # Duplicate Code Detector
 
-Automated duplicate detection produces significantly better results than manual review — tools like jscpd perform token-level comparison across every file pair, catching duplicates that are easy to miss when reading code by eye. This skill runs that analysis and turns the raw output into a prioritized, actionable refactoring plan.
+jscpd performs token-level comparison across every file pair, catching duplicates invisible to manual review. This skill runs that analysis and turns output into a classified, prioritized refactoring plan.
 
-## Detection vs Implementation
+**REQUIRED FOLLOW-UP SKILL:** Use `incremental-refactoring` to implement the refactoring after detection.
 
-This skill **finds** duplicates. To **refactor** them, hand off to `incremental-refactoring` afterward.
+If the user says "refactor technical debt" or "clean up this codebase", start here to find targets first.
 
-Typical flow:
-1. This skill → identify and prioritize duplicate code
-2. `incremental-refactoring` → implement the changes with tests
+```dot
+digraph detection_flow {
+  "Check project config" -> "jscpd available?" [shape=diamond];
+  "jscpd available?" -> "Run jscpd" [label="yes"];
+  "jscpd available?" -> "Grep fallback" [label="no"];
+  "Run jscpd" -> "Extract & cap results (jq)";
+  "Grep fallback" -> "Extract & cap results (jq)";
+  "Extract & cap results (jq)" -> "Classify (exact/near/structural)";
+  "Classify (exact/near/structural)" -> "Rank by impact score";
+  "Rank by impact score" -> "Present findings → incremental-refactoring";
+}
+```
 
-If the user says something like "refactor technical debt" or "clean up this codebase", start here to find concrete targets first.
+---
+
+## Quick Reference
+
+| Clone Type | Description | Refactoring Pattern |
+|---|---|---|
+| **Exact** | Byte-for-byte identical | Extract Function (no params) |
+| **Near** | Differs in names/literals/minor expressions | Parameterize (extract with args for varying parts) |
+| **Structural** | Same algorithm pattern, different implementations | Template Method / Strategy |
+
+**Ranking:** `impact_score = duplicated_lines x instances`. Tiebreaker: exact > near > structural.
 
 ---
 
 ## Workflow
 
-### Step 1: Install and run jscpd
-
-Check whether jscpd is available, and install it if not:
+### Step 1: Check environment and config
 
 ```bash
-which jscpd || npm install -g jscpd
+ls .jscpd.json .jscpdrc .jscpdrc.json 2>/dev/null  # Check project config
+which jscpd || npm install -g jscpd                  # Check/install jscpd
 ```
 
-If npm isn't available or installation fails, fall back to a grep-based approach: search for identical or near-identical multi-line blocks using `grep -rn` with context flags, or use `awk` to find repeated sequences. This won't be as thorough as jscpd but still surfaces obvious copy-paste patterns. Note this limitation to the user.
+If a config file exists, **respect it** — run jscpd with no overriding flags so the project's thresholds and ignore patterns take effect.
 
-Run the analysis, excluding common non-source directories:
+If jscpd/npm unavailable, use the **Grep Fallback** section below. Tell the user: grep finds exact duplicates only.
 
+### Step 2: Run jscpd
+
+**With project config** (minimal flags, let config drive):
+```bash
+jscpd --reporters json --output /tmp/jscpd-report --gitignore /path/to/code
+```
+
+**Without project config** (sensible defaults):
 ```bash
 jscpd --min-lines 10 --min-tokens 50 \
-  --ignore "node_modules,dist,build,vendor,.git,__pycache__,*.min.js" \
-  --reporters json,console \
-  /path/to/code
+  --ignore "node_modules,dist,build,vendor,.git,__pycache__,*.min.js,coverage,tmp,generated" \
+  --reporters json --output /tmp/jscpd-report --gitignore /path/to/code
 ```
 
-**Tuning guidance:**
-- `--min-lines 10` is a reasonable default that avoids noise from short common patterns (imports, boilerplate). Lower to 5 for small codebases or raise to 15-20 for large/verbose ones.
-- `--min-tokens 50` filters out trivially short matches. Adjust alongside min-lines.
-- For specific languages, you can scope with `--format "javascript,typescript"` etc.
-- jscpd writes JSON output to `report/` by default — read `report/jscpd-report.json` for structured data.
+**Always use:** `--gitignore` (respect .gitignore), `--output /tmp/jscpd-report` (avoid flooding stdout), `--reporters json` (not console for large codebases).
 
-### Step 2: Extract metrics
+Tuning: `--min-lines` 5 (small) to 15-20 (large/verbose). `--format "javascript,typescript"` to scope languages.
 
-From the jscpd JSON report, pull out:
-- Overall duplication percentage
-- Total duplicated lines
-- Number of clone groups
-- Files with the most duplication (sorted by duplicated lines)
+### Step 3: Extract and cap results
 
-Present a quick summary to the user before diving into details — this gives them a sense of scale.
+**Token budget management** — use `jq` to avoid loading raw JSON into context:
 
-### Step 3: Analyze top duplicates
+```bash
+# Summary metrics
+jq '{percentage: .statistics.total.percentage, duplicatedLines: .statistics.total.duplicatedLines, clones: (.clones | length)}' /tmp/jscpd-report/jscpd-report.json
 
-For the top 3-5 duplicate groups (by lines x instances), dispatch subagents to analyze each one in parallel. Each subagent should:
+# All groups above threshold, sorted by impact, fragments capped at 500 chars
+# Default: include groups with impact >= 20 (e.g., 10 lines x 2 instances)
+# Adjust threshold based on codebase size — lower for small, higher for large
+jq '[.clones | group_by(.fragment) | map({fragment: .[0].fragment[0:500], lines: (.[0].duplicationA.end.line - .[0].duplicationA.start.line), instances: length, impact: ((.[0].duplicationA.end.line - .[0].duplicationA.start.line) * length), files: [.[] | .duplicationA.sourceId, .duplicationB.sourceId] | unique}) | sort_by(-.impact) | map(select(.impact >= 20))]' /tmp/jscpd-report/jscpd-report.json
+```
+
+**Filtering:** Include all groups above an impact threshold (default: impact >= 20) rather than a hard top-N cap. This surfaces all meaningful duplicates in one pass. Fragments truncated to 500 chars. If the result set is still too large for context, raise the threshold or batch into pages of 10. Present summary metrics first.
+
+**Inline exclusions:** If expected duplicates are missing, check for `jscpd:ignore-start` / `jscpd:ignore-end` markers. Mention these to the user.
+
+### Step 4: Classify and analyze
+
+Dispatch subagents in parallel for all groups above the impact threshold:
 
 ```
-Analyze this duplicate code group:
+Analyze this duplicate group:
 - Source A: <file_a> lines <X-Y>
 - Source B: <file_b> lines <M-N>
-- (additional instances if any)
 
-Read the duplicated code and its surrounding context. Then:
-1. Describe what the duplicated code does (1-2 sentences)
-2. Identify the appropriate refactoring pattern:
-   - Extract Function: for duplicated logic that can become a shared helper
-   - Extract Class/Module: for larger chunks with shared state
-   - Template Method: for similar-but-not-identical sequences with variation points
-   - Configuration/parameterization: for code that differs only in literal values
-3. Note any subtle differences between the instances (these affect refactoring strategy)
-4. Estimate impact: how many lines would be saved, how many files touched
-5. Flag any risks (e.g., instances that look the same but have different side effects)
-
-Save your analysis to: <output_path>
+1. Classify: Exact / Near / Structural (see Quick Reference)
+2. Match refactoring pattern to classification
+3. Note differences between instances
+4. Estimate impact: lines saved, files touched
+5. Flag risks: same-looking code with different side effects, or coincidental structural similarity (should NOT be unified)
 ```
 
-### Step 4: Generate TDD refactoring plan
+### Step 5: Generate TDD refactoring plan
 
-Prioritize duplicates by impact: `duplicated_lines x number_of_instances`, breaking ties by complexity.
-
-For each priority item, produce a plan like:
+For each priority item:
 
 ```markdown
-## Priority 1: [Descriptive name] (X lines across Y instances)
-**Pattern:** Extract Function / Extract Class / etc.
-**Files affected:** list of files
+## Priority 1: [Name] (X lines, Y instances)
+**Type:** Exact / Near / Structural
+**Pattern:** Extract Function / Parameterize / Template Method
+**Impact score:** X | **Files:** list
 
-1. Write a test that captures the current behavior of one instance
-2. Extract the shared code into [function/class/module] with [parameters for variation points]
-3. Replace each instance with a call to the extracted code
-4. Run tests after each replacement to catch subtle differences
-5. Remove any dead code left behind
+1. Write test capturing current behavior of one instance
+2. Extract shared code with parameters for variation points
+3. Replace each instance, run tests after each
+4. Remove dead code
 ```
 
-The test-first approach matters here because duplicated code often has slight behavioral differences between instances that only surface when you try to unify them.
-
-### Step 5: Present findings
-
-Summarize everything for the user:
+### Step 6: Present findings
 
 ```
 ## Duplicate Code Analysis
-
-**Metrics:** X% duplication (Y duplicated lines across Z clone groups)
+**Metrics:** X% duplication (Y lines, Z clone groups)
+**Config:** [project .jscpd.json / defaults] | **Scanned:** [path] (respecting .gitignore)
 
 **Top priorities:**
-1. [Name] — X lines, Y instances → [refactoring pattern]
-2. [Name] — X lines, Y instances → [refactoring pattern]
-3. [Name] — X lines, Y instances → [refactoring pattern]
-
-**Refactoring plan:** [TDD steps for each priority]
+1. [Name] — Exact, X lines, Y instances (impact: Z) → Extract Function
+2. [Name] — Near, X lines, Y instances (impact: Z) → Parameterize
 
 Want to start refactoring Priority 1? (I'll hand off to incremental-refactoring)
 ```
 
 ---
 
+## Grep Fallback (when jscpd unavailable)
+
+**Tell the user upfront:** grep finds exact text duplicates only — no near or structural detection.
+
+Use **ripgrep (`rg`)** if available (respects `.gitignore` by default, handles nested `.gitignore` files). Use `--type` to scope languages (e.g., `--type py --type go`).
+
+**With ripgrep:**
+```bash
+# Find most-repeated non-trivial lines, with file locations
+rg -n --no-heading --type py --type go '.' /path/to/code \
+  | awk -F: '{line=$3; for(i=4;i<=NF;i++) line=line":"$i; if(length(line)>60) print line}' \
+  | sort | uniq -c | sort -rn | head -20
+# Then locate which files contain the top hit:
+rg -n --no-heading 'exact duplicate line text here' /path/to/code
+```
+
+**Without ripgrep (grep -rn fallback):**
+```bash
+grep -rn --include='*.py' --include='*.go' \
+  --exclude-dir=node_modules --exclude-dir=vendor --exclude-dir=dist --exclude-dir=coverage --exclude-dir=.git \
+  '.' /path/to/code \
+  | awk -F: '{line=$3; for(i=4;i<=NF;i++) line=line":"$i; if(length(line)>60) print line}' \
+  | sort | uniq -c | sort -rn | head -20
+```
+
+**Processing results:**
+- Cap to **top 20 lines**, investigate top 5-10 as block candidates
+- For each candidate line, run a second search to find **which files** contain it
+- Group adjacent repeated lines into blocks — if lines N, N+1, N+2 all appear duplicated in the same file pair, that's one multi-line block, not 3 separate duplicates
+- Read only 10 lines context around each block candidate
+- Classify all as **Exact**. Flag "possible Near" if lines differ by 1-2 tokens
+- Impact formula still applies. Add to presentation:
+```
+**Detection:** grep fallback (exact only) | **Recommendation:** Install jscpd for full detection
+```
+
+---
+
+## Common Mistakes
+
+| Mistake | Fix |
+|---|---|
+| Overriding project `.jscpd.json` with hardcoded flags | Check for config first, use minimal flags if present |
+| Loading full jscpd JSON into context | Use `jq` to filter by impact threshold and truncate fragments |
+| Hard-capping to top N groups | Use impact threshold instead — surfaces all meaningful duplicates in one pass |
+| Skipping `--gitignore` flag | Always pass it — without it, generated/coverage dirs get scanned |
+| Treating all duplicates the same | Classify (exact/near/structural) — each needs different refactoring |
+| Unifying coincidentally similar code | Structural clones with different domains should often stay separate |
+
 ## Before finishing
 
-Verify:
-1. jscpd ran successfully (or fallback was used) with metrics extracted
-2. Each priority item has a concrete TDD refactoring plan
-3. Priorities are ranked by impact, not just by which appeared first in the report
+1. jscpd ran (or fallback used) with metrics extracted
+2. Project config respected if present
+3. `.gitignore` respected via `--gitignore`
+4. Results filtered by impact threshold (not hard-capped), fragments truncated to 500 chars
+5. Each duplicate classified with matching refactoring pattern
+6. Priorities ranked by impact score
+7. User told about `jscpd:ignore` markers if relevant
