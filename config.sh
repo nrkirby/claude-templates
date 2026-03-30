@@ -56,6 +56,7 @@ readonly PLUGINS=(
     "skill-creator@claude-plugins-official"
     "claude-code-setup@claude-plugins-official"
     "pr-review-toolkit@claude-plugins-official"
+    "hookify@claude-plugins-official"
     "engram@engram"
     "ct@claude-templates"
 )
