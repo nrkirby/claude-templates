@@ -9,7 +9,7 @@
     {
       "name": "ct",
       "version": "1.0.0",
-      "description": "Claude Templates - Skills, commands, and agents for Claude Code with sandbox safety",
+      "description": "Battle-tested skills, agents, and commands for Claude Code — TDD, debugging, code review, and parallel workflows",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/pvillega/claude-templates",

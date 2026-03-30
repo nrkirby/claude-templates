@@ -1,6 +1,6 @@
 {
   "name": "ct",
-  "description": "Claude Templates - Tested configuration of skills, commands, and agents for Claude Code. Designed for sandbox mode with safety guards.",
+  "description": "Battle-tested skills, agents, and commands for Claude Code — TDD workflows, systematic debugging, code review, and parallel task execution.",
   "version": "1.0.0",
   "author": {
     "name": "Pere Villega",
