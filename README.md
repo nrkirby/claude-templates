@@ -17,6 +17,18 @@ cd claude-templates
 cl
 ```
 
+To update all installed plugins, skills, and tools to their latest versions:
+
+```bash
+./update.sh
+```
+
+To completely remove everything installed by this project:
+
+```bash
+./uninstall.sh
+```
+
 If you do not use Bash or Zsh, you can set up the alias manually:
 
 ```bash
@@ -57,12 +69,6 @@ The [install.sh](install.sh) script installs plugins, skills, sandbox settings, 
 ```
 
 Use `--clean` for a fresh install when you want to remove stale configuration that might not be properly overridden. The `--dry-run` flag lets you preview what would be deleted before committing.
-
-To update all installed plugins and skills to their latest versions:
-
-```bash
-./update.sh
-```
 
 ### API Keys
 
@@ -231,6 +237,7 @@ The `install.sh` script adds a line to your `~/.bashrc` and/or `~/.zshrc` that e
 
 - **[install.sh](install.sh)** - Setup script (marketplace, plugins, skills, sandbox settings)
 - **[update.sh](update.sh)** - Updates all installed plugins, skills, and npm packages
+- **[uninstall.sh](uninstall.sh)** - Removes all plugins, skills, tools, settings, and shell aliases
 - **[plugins/ct/](plugins/ct/)** - The local Claude Code plugin (skills, commands, agents)
 - **[templates/CLAUDE.md](templates/CLAUDE.md)** - Template project instructions
 - **[templates/statusline.sh](templates/statusline.sh)** - Custom status line (folder, branch, model, context, rate limits, agent/worktree)
