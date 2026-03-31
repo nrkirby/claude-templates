@@ -213,6 +213,10 @@ claude plugin marketplace add boostvolt/claude-code-lsps
 
 After installing, restart Claude Code. Verify with: check `~/.claude/debug/latest` for `Total LSP servers loaded: N`.
 
+## Agent Teams
+
+The sandbox settings enable the experimental **Agent Teams** feature (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`), which allows Claude to coordinate multiple agents working together on complex tasks.
+
 ## Status Line
 
 A custom status line script (`templates/statusline.sh`) is installed to `~/.claude/statusline.sh` and configured via `sandbox-settings.json`. It displays up to three lines:
