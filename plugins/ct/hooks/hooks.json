@@ -1,5 +1,29 @@
 {
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/engram/session-start.sh\"",
+            "timeout": 10,
+            "statusMessage": "Loading engram memory..."
+          }
+        ]
+      },
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/engram/post-compaction.sh\"",
+            "timeout": 10,
+            "statusMessage": "Recovering engram context after compaction..."
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "hooks": [
@@ -9,15 +33,36 @@
             "async": false
           }
         ]
-      }
-    ],
-"Notification": [
+      },
       {
-        "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/notify\"",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/engram/user-prompt-submit.sh\"",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/engram/subagent-stop.sh\"",
+            "timeout": 10,
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/engram/session-stop.sh\"",
+            "timeout": 5,
             "async": true
           }
         ]
