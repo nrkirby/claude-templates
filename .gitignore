@@ -4,6 +4,7 @@
 .envrc
 mise.toml
 .serena
+.gabb
 
 # Claude settings (local overrides should not be committed)
 .claude/settings.local.json
