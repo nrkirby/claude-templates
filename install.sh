@@ -328,7 +328,10 @@ merge_json_configs() {
             add_error "sandbox-settings.json is not valid JSON, skipping sandbox settings merge"
         else
             # Deep merge: objects are recursively merged, arrays are concatenated and deduplicated
-            if jq -s "$DEEP_MERGE_JQ" "$HOME/.claude/settings.json" "$SCRIPT_DIR/sandbox-settings.json" > "$HOME/.claude/settings.json.tmp" && mv "$HOME/.claude/settings.json.tmp" "$HOME/.claude/settings.json"; then
+            # Pre-process sandbox-settings.json to expand ~ to $HOME (Claude requires absolute paths)
+            local expanded_settings
+            expanded_settings=$(sed "s|~/|$HOME/|g" "$SCRIPT_DIR/sandbox-settings.json")
+            if jq -s "$DEEP_MERGE_JQ" "$HOME/.claude/settings.json" <(echo "$expanded_settings") > "$HOME/.claude/settings.json.tmp" && mv "$HOME/.claude/settings.json.tmp" "$HOME/.claude/settings.json"; then
                 echo "Sandbox settings merged successfully (arrays concatenated, objects merged)"
             else
                 add_error "Failed to merge sandbox-settings.json into ~/.claude/settings.json"

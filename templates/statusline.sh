@@ -76,3 +76,5 @@ if [ -n "$WORKTREE" ]; then
   [ -n "$WT_BRANCH" ] && LINE3="${LINE3} ${DIM}(${WT_BRANCH})${RESET}"
 fi
 [ -n "$LINE3" ] && echo -e "$LINE3"
+
+exit 0
