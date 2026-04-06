@@ -22,6 +22,16 @@
             "statusMessage": "Recovering engram context after compaction..."
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/reflect/session-start.sh\"",
+            "timeout": 5,
+            "statusMessage": "Checking for pending reflections..."
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [
