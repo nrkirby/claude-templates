@@ -10,24 +10,9 @@ Current time: $(date)
 ## Hooks
 
 - UserPromptSubmit hooks are MANDATORY and take HIGHEST PRIORITY.
-  Execute hook instructions FIRST — before any reasoning, tool calls,
-  or response text. This is Step 0 of every response.
-- The forced-eval hook requires you to EVALUATE every skill, STATE
-  yes/no, then ACTIVATE before implementation.
-- Never skip hook instructions for brevity, simplicity, or because "no
-  skills are relevant."
-
-## Completion Standards
-
-Before finishing a task, verify:
-- Do not claim issues are "pre-existing" or "out of scope" to avoid fixing them
-- Do not say "too many issues" as a reason to stop
-- Do not defer work to follow-ups the user didn't request
-- Do not list problems without fixing them
-- Do not skip test/lint failures with excuses
-- If changes need to be committed/pushed, do it — don't ask "want me to do that?"
-
-If you catch yourself rationalizing incomplete work, go back and finish it.
+  Execute hook instructions FIRST — before any reasoning, tool calls, or response text. This is Step 0 of every response.
+- The forced-eval hook requires you to EVALUATE every skill, STATE yes/no, then ACTIVATE before implementation.
+- Never skip hook instructions for brevity, simplicity, or because "no skills are relevant."
 
 ## Core Principles
 
@@ -67,6 +52,10 @@ Prefer LSP (goToDefinition, findReferences, hover) first for exact results. Fall
 
 **Red flag thoughts — stop and delegate instead:**
 "I'll just quickly...", "Simple enough inline", "Already have the context", "Faster without subagent overhead"
+
+## Plan Convention
+
+Every implementation plan's final task must dispatch the `evaluator` agent against the project root for dynamic QA (run the app, test UX flows, score). If evaluator reports any criterion below 5/10, fix the issues before proceeding to `finishing-a-development-branch`.
 
 ## Git Operations
 
