@@ -5,7 +5,7 @@ description: >
   Use when the user runs /reflect or /reflect review. Also use when the user says
   "let's reflect", "what did we learn", "session learnings", "write a reflection".
 user-invocable: true
-tools: Read, Edit, Write, Glob, AskUserQuestion
+tools: Read, Edit, Write, Glob, Bash, AskUserQuestion
 ---
 
 # Reflect
@@ -16,6 +16,8 @@ Structured self-reflection that compounds learning into project-specific instruc
 
 - No arguments or `/reflect` → **Generate mode**
 - `/reflect review` → **Review mode**
+
+> **Boundary with revise-claude-md:** This skill produces *structured proposals* with a review gate. `revise-claude-md` makes *direct ad hoc edits* to CLAUDE.md. They complement each other — use `/reflect` for systematic compound learning, use `revise-claude-md` for immediate one-off updates.
 
 ---
 
@@ -68,7 +70,7 @@ Append to `.claude/REFLECTION.md` using this format:
 
 If the file doesn't exist yet, create it with a `# Reflections` header first.
 
-If a category has nothing worth noting, write `- [PENDING] Nothing notable this session` — do not omit the category.
+If a category has nothing worth noting, write `- [SKIPPED] Nothing notable this session` — do not omit the category.
 
 ### Step 3: Add @REFLECTION.md to CLAUDE.md
 
@@ -99,7 +101,7 @@ Walk through pending reflections and apply approved ones to CLAUDE.md.
 
 ### Step 1: Find Pending Entries
 
-Read `.claude/REFLECTION.md` and find all lines matching `- [PENDING]`.
+Read `.claude/REFLECTION.md` and find all lines matching `- [PENDING]` (case-insensitive).
 
 If none found, report "No pending reflections to review." and stop.
 
@@ -108,7 +110,7 @@ If none found, report "No pending reflections to review." and stop.
 For each `[PENDING]` entry, present it to the user with these options:
 - **Approve** — will be rewritten as a directive and added to CLAUDE.md
 - **Reject** — will be marked [REJECTED] and skipped
-- **Edit** — user provides revised text, then approve
+- **Edit** — user provides revised text, then approve. Edited entries follow the same approve flow — the edited text replaces the original in REFLECTION.md before tagging `[APPROVED]`.
 
 Present ONE entry at a time. Wait for the user's response before proceeding to the next.
 
