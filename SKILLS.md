@@ -147,6 +147,7 @@ Code quality, security, refactoring, and development workflows.
 | fix-loop                  | skill   | Iterative review-fix cycle — code-reviewer, fixer, verify, repeat until clean  |
 | incremental-refactoring   | skill   | Refactor one transformation at a time, high-impact focus                       |
 | performance-optimization  | skill   | Baseline, profile, optimize backend/API/database performance                   |
+| reflect                   | skill   | Self-reflection after work sessions — structured proposals with review gate    |
 | revise-claude-md          | skill   | Update CLAUDE.md with session learnings                                        |
 | threat-modeling           | skill   | STRIDE framework threat analysis for auth, payments, APIs, webhooks            |
 | code-reviewer             | agent   | Autonomous code review seeking disconfirmation — best practices, security, performance |
