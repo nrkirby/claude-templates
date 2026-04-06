@@ -38,15 +38,7 @@ Already finished without measuring? Roll back to old code, measure, then re-appl
 
 ### 1. Baseline Measurement (BEFORE any code changes)
 
-Measure with a **reproducible tool under controlled conditions**:
-- **Tool + metric + value** (e.g., "k6 load test: p95 = 4.2s at 100 req/s")
-- **Target metric** (e.g., "p95 < 500ms at 100 req/s")
-- **Conditions recorded** (concurrency, dataset size, environment, time)
-
-A `curl` wall-clock time is NOT a baseline. Use:
-- **API latency:** k6, wrk, vegeta, or hey with defined concurrency and duration
-- **Database:** `pg_stat_statements`, `EXPLAIN ANALYZE`, slow query log
-- **Application:** APM traces (DataDog, NewRelic, OpenTelemetry), `cProfile`, `perf`
+Record **tool + metric + value + conditions** (e.g., "k6 load test: p95 = 4.2s at 100 req/s, dataset: 10k rows"). Must be reproducible — `curl` wall-clock time is NOT a baseline. Use load testing tools (k6, wrk, vegeta) for APIs, `EXPLAIN ANALYZE`/`pg_stat_statements` for databases, APM traces for applications.
 
 ### 2. Bottleneck Analysis (PROFILE, don't guess)
 
@@ -57,21 +49,12 @@ A `curl` wall-clock time is NOT a baseline. Use:
 
 **If profiling contradicts your assumption, trust the profiler.**
 
-### 3. Optimization Strategy
+### 3. Optimize and Validate
 
-- Evaluate 2-3 approaches with tradeoffs
-- State expected improvement with rationale
-
-### 4. Implementation
-
-- Minimal change — fix the measured bottleneck, don't refactor the neighborhood
-- Local verification against same dataset/conditions as baseline
-
-### 5. Validation
-
-- **Re-measure with same tool, same conditions, same environment** as step 1
-- Compare before/after with specific numbers
-- Check no regressions in other endpoints, error rates, or resource usage
+- Evaluate 2-3 approaches with tradeoffs. State expected improvement.
+- Implement minimal change — fix the measured bottleneck only
+- **Re-measure with same tool, same conditions** as step 1
+- Compare before/after with specific numbers. Check no regressions.
 - Record results in PR description with tool, conditions, and numbers
 
 ---

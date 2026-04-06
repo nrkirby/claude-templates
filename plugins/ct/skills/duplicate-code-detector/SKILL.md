@@ -29,11 +29,11 @@ digraph detection_flow {
 
 ## Quick Reference
 
-| Clone Type | Description | Refactoring Pattern |
-|---|---|---|
-| **Exact** | Byte-for-byte identical | Extract Function (no params) |
-| **Near** | Differs in names/literals/minor expressions | Parameterize (extract with args for varying parts) |
-| **Structural** | Same algorithm pattern, different implementations | Template Method / Strategy |
+| Clone Type | Refactoring Pattern |
+|---|---|
+| **Exact** | Extract Function (no params) |
+| **Near** (differs in names/literals) | Parameterize (extract with args) |
+| **Structural** (same pattern, different impl) | Template Method / Strategy |
 
 **Ranking:** `impact_score = duplicated_lines x instances`. Tiebreaker: exact > near > structural.
 
@@ -163,14 +163,9 @@ grep -rn --include='*.py' --include='*.go' \
 
 **Processing results:**
 - Cap to **top 20 lines**, investigate top 5-10 as block candidates
-- For each candidate line, run a second search to find **which files** contain it
-- Group adjacent repeated lines into blocks — if lines N, N+1, N+2 all appear duplicated in the same file pair, that's one multi-line block, not 3 separate duplicates
-- Read only 10 lines context around each block candidate
+- Group adjacent repeated lines into blocks (same file pair = one multi-line block)
 - Classify all as **Exact**. Flag "possible Near" if lines differ by 1-2 tokens
-- Impact formula still applies. Add to presentation:
-```
-**Detection:** grep fallback (exact only) | **Recommendation:** Install jscpd for full detection
-```
+- Add to presentation: `**Detection:** grep fallback (exact only) | **Recommendation:** Install jscpd for full detection`
 
 ---
 
@@ -178,11 +173,9 @@ grep -rn --include='*.py' --include='*.go' \
 
 | Mistake | Fix |
 |---|---|
-| Overriding project `.jscpd.json` with hardcoded flags | Check for config first, use minimal flags if present |
+| Overriding project `.jscpd.json` with flags | Check for config first, use minimal flags if present |
 | Loading full jscpd JSON into context | Use `jq` to filter by impact threshold and truncate fragments |
-| Hard-capping to top N groups | Use impact threshold instead — surfaces all meaningful duplicates in one pass |
-| Skipping `--gitignore` flag | Always pass it — without it, generated/coverage dirs get scanned |
-| Treating all duplicates the same | Classify (exact/near/structural) — each needs different refactoring |
+| Skipping `--gitignore` flag | Always pass it — generated/coverage dirs get scanned otherwise |
 | Unifying coincidentally similar code | Structural clones with different domains should often stay separate |
 
 ## Before finishing

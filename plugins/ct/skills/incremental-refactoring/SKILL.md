@@ -32,8 +32,8 @@ digraph refactoring {
 ## Phase 1: Analysis ONLY
 
 1. Read [guide.md](guide.md) for smells and catalog
-2. Scan for smells (long functions, duplication, deep nesting, unclear names, god classes)
-3. **80/20 prioritize** -- few refactorings, highest impact. Stop at diminishing returns
+2. Scan for smells listed in guide.md
+3. **80/20 prioritize** — few refactorings, highest impact. Stop at diminishing returns
 4. Present smells classified as HIGH / MEDIUM / LOW. Do NOT pre-plan execution order
 
 **HARD STOP: End your response after presenting the analysis. Do NOT continue to Phase 2 in the same message. Do NOT show code changes, proposed extractions, or "here's what I would do" previews. The user must explicitly approve before you touch any code.**
