@@ -17,11 +17,11 @@ This is the complete inventory of every plugin, skill, agent, command, hook, MCP
   - [Engram](#engram-1-skill-mcp-server)
 - [Global Skills](#global-skills)
   - [Code Quality & Review](#code-quality--review-9-skills)
-  - [Development Workflow](#development-workflow-15-skills)
+  - [Development Workflow](#development-workflow-16-skills)
   - [Web Research & Documentation](#web-research--documentation-11-skills)
   - [Browser Automation](#browser-automation-8-skills)
   - [Databases](#databases-4-skills)
-  - [Knowledge Management](#knowledge-management-4-skills)
+  - [Knowledge Management](#knowledge-management-5-skills)
   - [UI Components](#ui-components-1-skill)
   - [Marketing & Growth](#marketing--growth-34-skills)
 - [MCP Servers](#mcp-servers)
@@ -188,7 +188,7 @@ Persistent memory across sessions via SQLite + FTS5. Disables built-in auto-memo
 | code-simplifier       | getsentry/skills| Simplify code for clarity, consistency, and maintainability     |
 | claude-settings-audit | getsentry/skills| Analyze repo and recommend Claude Code settings.json permissions|
 
-### Development Workflow (15 skills)
+### Development Workflow (16 skills)
 
 | Name                  | Source          | Description                                                     |
 | --------------------- | --------------- | --------------------------------------------------------------- |
@@ -207,6 +207,7 @@ Persistent memory across sessions via SQLite + FTS5. Disables built-in auto-memo
 | skill-creator         | getsentry/skills| Alias for skill-writer                                           |
 | sred-project-organizer| getsentry/skills| Organize projects into SRED format for submission                |
 | sred-work-summary     | getsentry/skills| Annual work summary grouped into SRED projects                   |
+| find-skills           | vercel-labs/skills | Discover available skills                                       |
 
 ### Web Research & Documentation (11 skills)
 
@@ -246,7 +247,7 @@ Persistent memory across sessions via SQLite + FTS5. Disables built-in auto-memo
 | vitess   | planetscale/database-skills | Vitess best practices, sharding, and VSchema configuration      |
 | neki     | planetscale/database-skills | Neki sharded Postgres product overview and scaling guidance     |
 
-### Knowledge Management (4 skills)
+### Knowledge Management (5 skills)
 
 | Name              | Source                  | Description                                                     |
 | ----------------- | ----------------------- | --------------------------------------------------------------- |
@@ -254,6 +255,7 @@ Persistent memory across sessions via SQLite + FTS5. Disables built-in auto-memo
 | obsidian-markdown | kepano/obsidian-skills  | Obsidian-flavored markdown: wikilinks, callouts, embeds, properties |
 | obsidian-bases    | kepano/obsidian-skills  | Create Obsidian Bases (.base files) with views, filters, formulas |
 | json-canvas       | kepano/obsidian-skills  | Create/edit JSON Canvas files (.canvas) for visual maps         |
+| defuddle          | kepano/obsidian-skills  | Extract clean markdown from web pages *(also listed under Web Research)* |
 
 ### UI Components (1 skill)
 
