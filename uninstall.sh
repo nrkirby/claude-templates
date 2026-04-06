@@ -207,6 +207,85 @@ uninstall_skills() {
             fi
         fi
     done
+
+    # Clean up orphaned skills from the lock file that are no longer in SKILLS array
+    # (e.g. skill packages removed from config.sh but still installed on disk)
+    cleanup_orphaned_skills
+}
+
+# Removes skills from ~/.agents that were installed via skills.sh but are no longer
+# tracked in the SKILLS config array. Uses the lock file to identify them.
+cleanup_orphaned_skills() {
+    local lock_file="$HOME/.agents/.skill-lock.json"
+
+    if [ ! -f "$lock_file" ]; then
+        return 0
+    fi
+
+    if ! command -v jq &> /dev/null; then
+        add_warning "jq not found, skipping orphaned skills cleanup"
+        return 0
+    fi
+
+    echo "  Checking for orphaned skills in lock file..."
+
+    local orphaned_skills
+    orphaned_skills=$(jq -r '.skills // {} | to_entries[] | select(.value.sourceType == "github") | "\(.key)\t\(.value.source)"' "$lock_file" 2>/dev/null) || return 0
+
+    if [ -z "$orphaned_skills" ]; then
+        return 0
+    fi
+
+    local removed=0
+    while IFS=$'\t' read -r skill_name skill_source; do
+        # Skip if this skill's source repo is still in the SKILLS config
+        local still_configured=false
+        for configured in "${SKILLS[@]}"; do
+            if [[ "$configured" == *"$skill_source"* ]]; then
+                still_configured=true
+                break
+            fi
+        done
+
+        if [ "$still_configured" = true ]; then
+            continue
+        fi
+
+        if [ "$DRY_RUN" = true ]; then
+            echo "  [dry-run] Would remove orphaned skill: $skill_name (from $skill_source)"
+        else
+            echo "  Removing orphaned skill: $skill_name (from $skill_source)..."
+            rm -rf "$HOME/.agents/skills/$skill_name"
+            rm -f "$HOME/.claude/skills/$skill_name"
+            removed=$((removed + 1))
+        fi
+    done <<< "$orphaned_skills"
+
+    # Update the lock file to remove orphaned entries
+    if [ "$DRY_RUN" = false ] && [ "$removed" -gt 0 ]; then
+        # Build a jq filter that keeps only skills whose source is still in SKILLS config
+        local keep_sources=""
+        for configured in "${SKILLS[@]}"; do
+            # Extract the owner/repo part (handles both "owner/repo" and "https://...owner/repo --skill ...")
+            local repo
+            repo=$(echo "$configured" | grep -oE '[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+' | head -1)
+            if [ -n "$repo" ]; then
+                if [ -n "$keep_sources" ]; then
+                    keep_sources="$keep_sources, \"$repo\""
+                else
+                    keep_sources="\"$repo\""
+                fi
+            fi
+        done
+
+        jq --argjson sources "[$keep_sources]" '
+            .skills |= with_entries(
+                select(.value.sourceType != "github" or ([.value.source] | inside($sources)))
+            )
+        ' "$lock_file" > "$lock_file.tmp" && mv "$lock_file.tmp" "$lock_file"
+
+        echo "  Removed $removed orphaned skill(s) and updated lock file"
+    fi
 }
 
 remove_auto_compact() {

@@ -23,7 +23,6 @@ readonly TOOLS=(
 # Simple format: "owner/repo"
 # With flags:    "https://github.com/owner/repo --skill skill-name"
 readonly SKILLS=(
-    "coreyhaines31/marketingskills"
     "https://github.com/upstash/context7 --skill context7-cli"
     "https://github.com/shadcn/ui --skill shadcn"
     "https://github.com/tavily-ai/skills"
@@ -51,7 +50,6 @@ readonly PLUGINS=(
     "code-review@claude-plugins-official"
     "security-guidance@claude-plugins-official"
     "commit-commands@claude-plugins-official"
-    "skill-creator@claude-plugins-official"
     "claude-code-setup@claude-plugins-official"
     "hookify@claude-plugins-official"
     "ct@claude-templates"
