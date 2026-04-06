@@ -124,7 +124,7 @@ This template installs **87 global skills** from [skills.sh](https://skills.sh) 
 |----------|-------|---------|------------|
 | Code Quality & Review | 9 | getsentry/skills | find-bugs, security-review, Django reviews, GHA security |
 | Development Workflow | 16 | getsentry/skills, vercel-labs | commits, PRs, branches, docs, presentations, skill authoring |
-| Web Research & Docs | 11 | tavily-ai, upstash/context7, kepano | search, research, extract, crawl, library docs |
+| Web Research & Documentation | 11 | tavily-ai, upstash/context7, kepano | search, research, extract, crawl, library docs |
 | Browser Automation | 8 | vercel-labs, microsoft | browser testing, Electron apps, Slack, QA |
 | Databases | 4 | planetscale | PostgreSQL, MySQL, Vitess, Neki |
 | Knowledge Management | 5 | kepano/obsidian-skills | Obsidian CLI, markdown, Bases, Canvas, web extraction |
