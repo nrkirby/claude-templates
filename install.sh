@@ -433,6 +433,7 @@ print_lsp_info() {
     echo "  Scala          Piebald-AI/claude-code-lsps marketplace (Metals)                  cs install metals  (requires: brew install coursier/formulas/coursier && cs setup)"
     echo "  Haskell        m4dc4p/claude-hls (community plugin)                              ghcup install hls  (requires: curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh)"
     echo "  OCaml          Piebald-AI/claude-code-lsps or boostvolt/claude-code-lsps         opam install ocaml-lsp-server  (requires: brew install opam && opam init)"
+    echo "  Lean           Beneficial-AI-Foundation/lean4-claude-plugin (community)           brew install elan  (LSP built into Lean 4: lake serve)"
     echo "  Unison         No plugin available yet                                           brew install unisonweb/unison/ucm  (LSP built into UCM: ucm lsp)"
     echo ""
     echo "  To use third-party marketplaces, add them first:"
