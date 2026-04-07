@@ -22,6 +22,9 @@ Task-driven guide for finding the right tool, skill, or command. Organized by wh
 | Extract content from a URL | defuddle | Auto-activated when a URL is provided to read or analyze |
 | Build with Claude API/SDK | claude-api | Auto-activated when code imports `anthropic` or `@anthropic-ai/sdk` |
 
+**HINT**: On the `CLAUDE.md` of the project, explain how to run the project, which test users to use, etc. so the agent can run and verify the changes itself.
+**HINT**: When working on CSS changes, encourage the agent to take screenshots when it needs to check if the change it made had the desired effect.
+
 ## Reviewing & Fixing Code
 
 | When I need to... | Use | How |
@@ -107,4 +110,3 @@ PostgreSQL skill from PlanetScale. Triggered on any database-related task — sc
 ### Obsidian
 
 CLI interaction and Obsidian-flavored markdown. Triggered when working with `.md` files in Obsidian vaults or using `obsidian` CLI commands. The `obsidian-markdown` skill activates for syntax-specific tasks (wikilinks, callouts, embeds, properties).
-
