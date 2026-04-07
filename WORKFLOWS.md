@@ -10,6 +10,8 @@ Task-driven guide for finding the right tool, skill, or command. Organized by wh
 | Start isolated feature work | superpowers:using-git-worktrees | Auto-activated when executing plans |
 | Find available tools/skills | SKILLS.md + this file | Reference docs at repo root |
 
+**HINT**: you can use `hookify` (see [Meta](#meta--setup) section) to add hooks to control behaviours specific to your project. Hooks always execute, unlike `CLAUDE.md` statements, and can be useful if you use non-default build tools or settings.
+
 ## Writing Code
 
 | When I need to... | Use | How |
