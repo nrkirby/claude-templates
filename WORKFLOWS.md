@@ -18,7 +18,7 @@ Task-driven guide for finding the right tool, skill, or command. Organized by wh
 | Build a frontend UI | frontend-design skill | Auto-activated when asked to build web components, pages, or apps |
 | Add shadcn components | shadcn skill | Mention `shadcn`, or ask to add/search/fix shadcn components |
 | Look up library docs | context7-cli | Say `use context7 for <library>`, or mention `ctx7`/`context7` |
-| Search the web | tavily-search or tavily-research | `search for X`, `look up X`, or `research X in depth` |
+| Search the web | tavily-cli | `search for X`, `look up X`, or `research X in depth` |
 | Extract content from a URL | defuddle | Auto-activated when a URL is provided to read or analyze |
 
 ## Reviewing & Fixing Code

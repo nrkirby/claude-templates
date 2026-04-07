@@ -185,17 +185,12 @@ Persistent memory across sessions via SQLite + FTS5. Disables built-in auto-memo
 | gha-security-review   | getsentry/skills| GitHub Actions workflow security review                         |
 | skill-scanner         | getsentry/skills| Scan agent skills for security issues                           |
 
-### Web Research & Documentation (9 skills)
+### Web Research & Documentation (4 skills)
 
 | Name                 | Source              | Description                                                  |
 | -------------------- | ------------------- | ------------------------------------------------------------ |
-| tavily-search        | tavily-ai/skills    | Quick web search with LLM-optimized results                  |
-| tavily-research      | tavily-ai/skills    | Comprehensive AI-powered research with citations             |
-| tavily-extract       | tavily-ai/skills    | Extract clean content from specific URLs                     |
-| tavily-crawl         | tavily-ai/skills    | Crawl websites and extract multi-page content                |
-| tavily-map           | tavily-ai/skills    | Discover and list all URLs on a website                      |
 | tavily-cli           | tavily-ai/skills    | Full Tavily CLI: search, extract, crawl, research            |
-| tavily-best-practices| tavily-ai/skills    | Production Tavily integration patterns and reference          |
+| tavily-map           | tavily-ai/skills    | Discover and list all URLs on a website                      |
 | context7-cli         | upstash/context7    | Fetch library docs via ctx7 CLI                              |
 | defuddle             | kepano/obsidian-skills | Extract clean markdown from web pages (saves tokens vs WebFetch) |
 

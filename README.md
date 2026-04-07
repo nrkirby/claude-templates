@@ -121,12 +121,12 @@ Tools are configured in the `TOOLS` array in [config.sh](config.sh). Each tool h
 
 ## Skills
 
-This template provides **51 skills total** — 31 from [plugins](#plugins) (Superpowers 14, CT 12, plus Frontend Design, Claude Code Setup, Hookify, Skill Creator, Engram) and 20 global skills from [skills.sh](https://skills.sh) + tools:
+This template provides **46 skills total** — 31 from [plugins](#plugins) (Superpowers 14, CT 12, plus Frontend Design, Claude Code Setup, Hookify, Skill Creator, Engram) and 15 global skills from [skills.sh](https://skills.sh) + tools:
 
 | Category | Count | Sources | Highlights |
 |----------|-------|---------|------------|
 | Code Quality & Review | 4 | getsentry/skills | find-bugs, security-review, GHA security, skill-scanner |
-| Web Research & Documentation | 9 | tavily-ai, upstash/context7, kepano | search, research, extract, crawl, library docs |
+| Web Research & Documentation | 4 | tavily-ai, upstash/context7, kepano | tavily-cli, tavily-map, library docs |
 | Browser Automation | 2 | vercel-labs | agent-browser, dogfood (QA) |
 | Databases | 1 | planetscale | PostgreSQL |
 | Knowledge Management | 2 | kepano/obsidian-skills | Obsidian CLI, markdown |

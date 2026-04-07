@@ -91,7 +91,7 @@ Think like a research scientist crossed with an investigative journalist:
 ### Leveraging Tools
 
 - **WebSearch / WebFetch** — primary tools for web research and content extraction
-- **Tavily skills** — invoke `tavily-search` or `tavily-extract` via the Skill tool for specialized operations (if installed)
+- **Tavily skills** — invoke `tavily-cli` via the Skill tool for web search, extract, crawl, and research (if installed)
 - **Agent subagents** — dispatch parallel research threads for independent questions
 - **Browser skills** — invoke `agent-browser` via the Skill tool for JavaScript-heavy sites (if installed)
 

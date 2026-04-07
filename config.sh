@@ -27,7 +27,8 @@ readonly TOOLS=(
 readonly SKILLS=(
     "https://github.com/upstash/context7 --skill context7-cli"
     "https://github.com/shadcn/ui --skill shadcn"
-    "https://github.com/tavily-ai/skills"
+    "https://github.com/tavily-ai/skills --skill tavily-cli"
+    "https://github.com/tavily-ai/skills --skill tavily-map"
     "https://github.com/planetscale/database-skills --skill postgres"
     "vercel-labs/agent-browser --skill agent-browser"
     "vercel-labs/agent-browser --skill dogfood"
