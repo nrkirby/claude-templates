@@ -13,7 +13,7 @@ This is the complete inventory of every plugin, skill, agent, command, hook, MCP
   - [Claude Code Setup](#claude-code-setup-1-skill)
   - [Hookify](#hookify-1-skill-1-agent-4-commands)
   - [Skill Creator](#skill-creator-1-skill)
-  - [CT](#ct-12-skills-6-agents-2-commands)
+  - [CT](#ct-13-skills-6-agents)
   - [Engram](#engram-1-skill-mcp-server)
 - [Global Skills](#global-skills)
   - [Code Quality & Review](#code-quality--review-4-skills)
@@ -131,7 +131,7 @@ Create, modify, and measure skill performance with evals and variance analysis.
 | -------------- | ----- | ------------------------------------------------------------------------ |
 | skill-creator  | skill | Create new skills, modify existing ones, run evals, benchmark performance |
 
-### CT (12 skills, 6 agents, 2 commands)
+### CT (13 skills, 6 agents)
 
 Code quality, security, refactoring, and development workflows.
 
@@ -148,6 +148,7 @@ Code quality, security, refactoring, and development workflows.
 | mutation-testing          | skill   | Diff-scoped mutation testing — Stryker, mutmut, cargo-mutants, PIT             |
 | performance-optimization  | skill   | Baseline, profile, optimize backend/API/database performance                   |
 | reflect                   | skill   | Self-reflection after work sessions — structured proposals with review gate    |
+| research                  | skill   | Systematic research with scientific methodology and evidence-based synthesis   |
 | revise-claude-md          | skill   | Update CLAUDE.md with session learnings                                        |
 | threat-modeling           | skill   | STRIDE framework threat analysis for auth, payments, APIs, webhooks            |
 | wcag-audit                | skill   | WCAG accessibility auditing — static analysis + axe-core runtime               |
@@ -157,8 +158,6 @@ Code quality, security, refactoring, and development workflows.
 | evaluator                 | agent   | Dynamic QA — runs the app, tests UX flows, scores criteria                     |
 | fixer                     | agent   | Targeted minimal fixes for critical review findings, verifies tests pass       |
 | refactor-scan             | agent   | Code quality coach — guides refactoring decisions post-TDD                     |
-| /ct:discover-aliases      | command | Scan shell aliases, generate Claude Code documentation                         |
-| /ct:research              | command | Systematic research with scientific methodology                                |
 
 ### Engram (1 skill, MCP server)
 
