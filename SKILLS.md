@@ -12,6 +12,7 @@ This is the complete inventory of every plugin, skill, agent, command, hook, MCP
   - [Commit Commands](#commit-commands-3-commands)
   - [Claude Code Setup](#claude-code-setup-1-skill)
   - [Hookify](#hookify-1-skill-1-agent-4-commands)
+  - [Skill Creator](#skill-creator-1-skill)
   - [CT](#ct-12-skills-6-agents-2-commands)
   - [Engram](#engram-1-skill-mcp-server)
 - [Global Skills](#global-skills)
@@ -120,6 +121,16 @@ Create custom hooks from natural language or conversation analysis.
 | /hookify:list          | command | List all configured hookify rules                                |
 | /hookify:configure     | command | Enable/disable hookify rules                                     |
 
+### Skill Creator (1 skill)
+
+Create, modify, and measure skill performance with evals and variance analysis.
+
+**Source:** claude-plugins-official
+
+| Name           | Type  | Description                                                              |
+| -------------- | ----- | ------------------------------------------------------------------------ |
+| skill-creator  | skill | Create new skills, modify existing ones, run evals, benchmark performance |
+
 ### CT (12 skills, 6 agents, 2 commands)
 
 Code quality, security, refactoring, and development workflows.
@@ -164,7 +175,7 @@ Persistent memory across sessions via SQLite + FTS5. Disables built-in auto-memo
 
 ## Global Skills
 
-**50 skills total** — 30 from plugins (see [Plugins](#plugins) above) and 20 from [skills.sh](https://skills.sh) + tools (below).
+**51 skills total** — 31 from plugins (see [Plugins](#plugins) above) and 20 from [skills.sh](https://skills.sh) + tools (below).
 
 ### Code Quality & Review (4 skills)
 

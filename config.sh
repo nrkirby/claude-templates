@@ -54,5 +54,6 @@ readonly PLUGINS=(
     "commit-commands@claude-plugins-official"
     "claude-code-setup@claude-plugins-official"
     "hookify@claude-plugins-official"
+    "skill-creator@claude-plugins-official"
     "ct@claude-templates"
 )

@@ -91,6 +91,7 @@ Plugins are installed from the [Claude marketplace](https://claude.com/plugins).
 | [Commit Commands](https://claude.com/plugins/commit-commands) | 3 commands | Git commit, push, PR creation with style analysis; branch cleanup | `/commit`, `/commit-push-pr`, `/clean_gone` |
 | [Claude Code Setup](https://claude.com/plugins/claude-code-setup) | 1 skill | Recommends tailored automations (MCP servers, skills, hooks, subagents) for a project | `recommend automations` |
 | [Hookify](https://claude.com/plugins/hookify) | 1 skill, 1 agent, 4 commands | Create custom hooks from natural language or conversation analysis | `/hookify`, `/hookify:list` |
+| [Skill Creator](https://claude.com/plugins/skill-creator) | 1 skill | Create, modify, and measure skill performance with evals and variance analysis | `/skill-creator` |
 | [Engram](https://github.com/Gentleman-Programming/engram) | 1 skill, MCP server | Persistent memory across sessions via SQLite + FTS5. Disables built-in auto-memory (`autoMemoryEnabled: false`) — engram's selective retrieval and automatic decay make it the better choice. | `mem_save`, `mem_search` (auto + manual) |
 
 The **ct** plugin (from this repo) adds 12 skills, 6 agents, and 2 commands for code quality, security, and refactoring workflows. See [SKILLS.md](SKILLS.md) for the complete list. Some skills and agents were adapted from [channingwalton/dotfiles](https://github.com/channingwalton/dotfiles).
@@ -120,7 +121,7 @@ Tools are configured in the `TOOLS` array in [config.sh](config.sh). Each tool h
 
 ## Skills
 
-This template provides **50 skills total** — 30 from [plugins](#plugins) (Superpowers 14, CT 12, plus Frontend Design, Claude Code Setup, Hookify, Engram) and 20 global skills from [skills.sh](https://skills.sh) + tools:
+This template provides **51 skills total** — 31 from [plugins](#plugins) (Superpowers 14, CT 12, plus Frontend Design, Claude Code Setup, Hookify, Skill Creator, Engram) and 20 global skills from [skills.sh](https://skills.sh) + tools:
 
 | Category | Count | Sources | Highlights |
 |----------|-------|---------|------------|
