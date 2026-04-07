@@ -253,3 +253,5 @@ Persistent memory across sessions via SQLite + FTS5. Disables built-in auto-memo
 | agent-browser           | AI-first browser automation (50+ commands)           | npm + browser install     |
 | Engram                  | Persistent memory for AI agents (SQLite + FTS5)      | Homebrew                  |
 | Gabb                    | Local code indexer for semantic code understanding   | Homebrew                  |
+| axe-core + pa11y        | WCAG accessibility auditing (runtime + batch)        | npm                       |
+| Nuclei + ZAP            | DAST security scanning (fast + deep)                 | Homebrew + Docker          |
