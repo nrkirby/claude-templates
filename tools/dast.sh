@@ -35,10 +35,7 @@ install_dast() {
             add_warning "Failed to pull ZAP Docker image"
         fi
     else
-        echo ""
-        echo "WARNING: Docker not found. ZAP deep scanning (Tier 2) requires Docker."
-        echo "  Nuclei (Tier 1) will work fine without it."
-        echo "  Install Docker: https://docs.docker.com/get-docker/"
+        add_warning "Docker not found. ZAP deep scanning (Tier 2) requires Docker. Nuclei (Tier 1) will work fine without it. Install Docker: https://docs.docker.com/get-docker/"
     fi
 }
 

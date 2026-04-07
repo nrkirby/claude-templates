@@ -120,7 +120,7 @@ Tools are configured in the `TOOLS` array in [config.sh](config.sh). Each tool h
 
 ## Skills
 
-This template provides **47 skills total** — 27 from [plugins](#plugins) (Superpowers 14, CT 9, plus Frontend Design, Claude Code Setup, Hookify, Engram) and 20 global skills from [skills.sh](https://skills.sh) + tools:
+This template provides **50 skills total** — 30 from [plugins](#plugins) (Superpowers 14, CT 12, plus Frontend Design, Claude Code Setup, Hookify, Engram) and 20 global skills from [skills.sh](https://skills.sh) + tools:
 
 | Category | Count | Sources | Highlights |
 |----------|-------|---------|------------|

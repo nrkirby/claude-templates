@@ -18,7 +18,7 @@ Determine the project's frontend framework and which files to audit.
    - `package.json` with react/next/gatsby dependencies + JSX/TSX files → **React** (use `eslint-plugin-jsx-a11y`)
    - `.vue` files or `package.json` with vue dependency → **Vue** (use `eslint-plugin-vuejs-accessibility`)
    - Plain `.html` files with no framework → **HTML** (use axe-core CLI directly)
-   - Fallback for unknown frameworks → **Runtime-only** (skip static, go to Phase 3)
+   - Fallback for unknown frameworks → **A11yInspect** (framework-agnostic ESLint plugin, 93 rules) or **Runtime-only** if A11yInspect unavailable (skip static, go to Phase 3)
 
 2. Determine scope:
    - If user specified files → use those

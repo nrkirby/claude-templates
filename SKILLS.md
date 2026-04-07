@@ -164,7 +164,7 @@ Persistent memory across sessions via SQLite + FTS5. Disables built-in auto-memo
 
 ## Global Skills
 
-**47 skills total** — 27 from plugins (see [Plugins](#plugins) above) and 20 from [skills.sh](https://skills.sh) + tools (below).
+**50 skills total** — 30 from plugins (see [Plugins](#plugins) above) and 20 from [skills.sh](https://skills.sh) + tools (below).
 
 ### Code Quality & Review (4 skills)
 
