@@ -1,5 +1,5 @@
 ---
-name: systematic-research
+name: research
 description: >
   Use when conducting comprehensive research — applies scientific methodology with
   adaptive strategies, multi-hop reasoning, and evidence-based synthesis.
