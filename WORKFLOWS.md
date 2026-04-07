@@ -34,6 +34,7 @@ Task-driven guide for finding the right tool, skill, or command. Organized by wh
 | GHA workflow security | gha-security-review | Say `review my GitHub Actions` or `audit workflows` |
 | Audit accessibility | ct:wcag-audit | `check accessibility` — static analysis + axe-core runtime audit |
 | Check test quality with mutations | ct:mutation-testing | `run mutation testing` — diff-scoped, auto-detects language |
+| Set up complexity linting | ct:lint-guard | `set up linting` — 17-language detection, strict complexity rules, Stop hook |
 
 ## Refactoring & Performance
 
@@ -66,6 +67,7 @@ Task-driven guide for finding the right tool, skill, or command. Organized by wh
 |---|---|---|
 | Deep codebase research | ct:deep-research agent | Dispatched for complex multi-file investigations |
 | Automate browser tasks | agent-browser | Say `open <url>`, `click`, `fill form`, or any browser interaction |
+| Visual UI testing / regression | agent-browser | `diff screenshot --baseline before.png`, `diff url <staging> <prod>`, viewport testing across breakpoints |
 | Test a web app (QA) | dogfood | Say `dogfood this app`, `QA this`, or `exploratory test` |
 
 ## Memory & Context
