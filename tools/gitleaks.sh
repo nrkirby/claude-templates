@@ -4,12 +4,10 @@
 # Installs gitleaks CLI and sets up a global git pre-commit hook for secret detection.
 # Requires: critical_error, add_warning functions from parent script
 
-readonly GITLEAKS_HOOKS_DIR="$HOME/.git-hooks"
-readonly GITLEAKS_HOOK_FILE="$GITLEAKS_HOOKS_DIR/pre-commit"
-
-# Marker comments to identify the gitleaks section in the hook file
-readonly GITLEAKS_MARKER_START="# --- gitleaks-start ---"
-readonly GITLEAKS_MARKER_END="# --- gitleaks-end ---"
+# Default hooks directory and marker comments for identifying gitleaks sections
+_GITLEAKS_HOOKS_DIR="$HOME/.git-hooks"
+_GITLEAKS_MARKER_START="# --- gitleaks-start ---"
+_GITLEAKS_MARKER_END="# --- gitleaks-end ---"
 
 _gitleaks_hook_content() {
     cat <<'HOOK'
@@ -61,28 +59,26 @@ install_gitleaks() {
 
 _setup_gitleaks_hook() {
     # Create hooks directory
-    mkdir -p "$GITLEAKS_HOOKS_DIR"
+    mkdir -p "$_GITLEAKS_HOOKS_DIR"
 
     # Configure core.hooksPath if not already set
     local current_hooks_path
     current_hooks_path=$(git config --global core.hooksPath 2>/dev/null || echo "")
+    local target_dir="$_GITLEAKS_HOOKS_DIR"
 
     if [ -z "$current_hooks_path" ]; then
-        echo "Setting global git hooks path to $GITLEAKS_HOOKS_DIR..."
-        git config --global core.hooksPath "$GITLEAKS_HOOKS_DIR"
-    elif [ "$current_hooks_path" != "$GITLEAKS_HOOKS_DIR" ]; then
-        add_warning "core.hooksPath is already set to '$current_hooks_path' (not $GITLEAKS_HOOKS_DIR). Gitleaks hook will be installed there instead."
-        # Use the existing hooks path
-        GITLEAKS_HOOKS_DIR_ACTUAL="$current_hooks_path"
-        mkdir -p "$GITLEAKS_HOOKS_DIR_ACTUAL"
+        echo "Setting global git hooks path to $_GITLEAKS_HOOKS_DIR..."
+        git config --global core.hooksPath "$_GITLEAKS_HOOKS_DIR"
+    elif [ "$current_hooks_path" != "$_GITLEAKS_HOOKS_DIR" ]; then
+        add_warning "core.hooksPath is already set to '$current_hooks_path' (not $_GITLEAKS_HOOKS_DIR). Gitleaks hook will be installed there instead."
+        target_dir="$current_hooks_path"
+        mkdir -p "$target_dir"
     fi
-
-    local target_dir="${GITLEAKS_HOOKS_DIR_ACTUAL:-$GITLEAKS_HOOKS_DIR}"
     local target_hook="$target_dir/pre-commit"
 
     # Check for existing pre-commit hook
     if [ -f "$target_hook" ]; then
-        if grep -q "$GITLEAKS_MARKER_START" "$target_hook" 2>/dev/null; then
+        if grep -q "$_GITLEAKS_MARKER_START" "$target_hook" 2>/dev/null; then
             echo "gitleaks hook already present in $target_hook"
             return 0
         fi
@@ -120,14 +116,14 @@ uninstall_gitleaks() {
 
     # Clean up the pre-commit hook
     local hooks_path
-    hooks_path=$(git config --global core.hooksPath 2>/dev/null || echo "$GITLEAKS_HOOKS_DIR")
+    hooks_path=$(git config --global core.hooksPath 2>/dev/null || echo "$_GITLEAKS_HOOKS_DIR")
     local target_hook="$hooks_path/pre-commit"
 
     if [ -f "$target_hook" ]; then
-        if grep -q "$GITLEAKS_MARKER_START" "$target_hook" 2>/dev/null; then
+        if grep -q "$_GITLEAKS_MARKER_START" "$target_hook" 2>/dev/null; then
             # Check if the hook contains ONLY gitleaks content
             local non_gitleaks_content
-            non_gitleaks_content=$(sed "/$GITLEAKS_MARKER_START/,/$GITLEAKS_MARKER_END/d" "$target_hook" | grep -v '^#!/usr/bin/env bash' | grep -v '^#' | grep -v '^$' | grep -v '_repo_hook' | grep -v 'exec ')
+            non_gitleaks_content=$(sed "/$_GITLEAKS_MARKER_START/,/$_GITLEAKS_MARKER_END/d" "$target_hook" | grep -v '^#!/usr/bin/env bash' | grep -v '^#' | grep -v '^$' | grep -v '_repo_hook' | grep -v 'exec ')
             if [ -z "$non_gitleaks_content" ]; then
                 rm "$target_hook"
                 echo "gitleaks pre-commit hook removed"
