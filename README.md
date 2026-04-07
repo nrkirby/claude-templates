@@ -88,12 +88,11 @@ Plugins are installed from the [Claude marketplace](https://claude.com/plugins).
 | [Code Review](https://claude.com/plugins/code-review) | 5 agents, 1 command | PR analysis with five parallel agents checking compliance, bugs, and git history | `/code-review` |
 | [Security Guidance](https://claude.com/plugins/security-guidance) | 1 hook | PreToolUse hook warning about security vulnerabilities on file edits (injection, XSS) | Automatic (pre-Edit/Write) |
 | [Commit Commands](https://claude.com/plugins/commit-commands) | 3 commands | Git commit, push, PR creation with style analysis; branch cleanup | `/commit`, `/commit-push-pr`, `/clean_gone` |
-| [Skill Creator](https://claude.com/plugins/skill-creator) | 1 skill, 1 agent | Create, evaluate, improve, and benchmark skills | `/skill-creator` |
 | [Claude Code Setup](https://claude.com/plugins/claude-code-setup) | 1 skill | Recommends tailored automations (MCP servers, skills, hooks, subagents) for a project | `recommend automations` |
 | [Hookify](https://claude.com/plugins/hookify) | 1 skill, 1 agent, 4 commands | Create custom hooks from natural language or conversation analysis | `/hookify`, `/hookify:list` |
 | [Engram](https://github.com/Gentleman-Programming/engram) | 1 skill, MCP server | Persistent memory across sessions via SQLite + FTS5. Disables built-in auto-memory (`autoMemoryEnabled: false`) — engram's selective retrieval and automatic decay make it the better choice. | `mem_save`, `mem_search` (auto + manual) |
 
-The **ct** plugin (from this repo) adds 9 skills, 5 agents, and 2 commands for code quality, security, and refactoring workflows. See [SKILLS.md](SKILLS.md) for the complete list. Some skills and agents were adapted from [channingwalton/dotfiles](https://github.com/channingwalton/dotfiles).
+The **ct** plugin (from this repo) adds 9 skills, 6 agents, and 2 commands for code quality, security, and refactoring workflows. See [SKILLS.md](SKILLS.md) for the complete list. Some skills and agents were adapted from [channingwalton/dotfiles](https://github.com/channingwalton/dotfiles).
 
 ## CLI Tools
 
@@ -118,19 +117,17 @@ Tools are configured in the `TOOLS` array in [config.sh](config.sh). Each tool h
 
 ## Skills
 
-This template installs **87 global skills** from [skills.sh](https://skills.sh) plus plugin-provided skills, organized by purpose:
+This template installs **53 global skills** from [skills.sh](https://skills.sh) plus plugin-provided skills, organized by purpose:
 
 | Category | Count | Sources | Highlights |
 |----------|-------|---------|------------|
 | Code Quality & Review | 9 | getsentry/skills | find-bugs, security-review, Django reviews, GHA security |
-| Development Workflow | 16 | getsentry/skills, vercel-labs | commits, PRs, branches, docs, presentations, skill authoring |
+| Development Workflow | 15 | getsentry/skills | commits, PRs, branches, docs, presentations, skill authoring |
 | Web Research & Documentation | 11 | tavily-ai, upstash/context7, kepano | search, research, extract, crawl, library docs |
 | Browser Automation | 8 | vercel-labs, microsoft | browser testing, Electron apps, Slack, QA |
 | Databases | 4 | planetscale | PostgreSQL, MySQL, Vitess, Neki |
 | Knowledge Management | 5 | kepano/obsidian-skills | Obsidian CLI, markdown, Bases, Canvas, web extraction |
 | UI Components | 1 | shadcn/ui | Component management and debugging |
-| Marketing & Growth | 34 | coreyhaines31/marketingskills | SEO, copywriting, CRO, pricing, ads, email, analytics |
-
 See **[SKILLS.md](SKILLS.md)** for the complete inventory and **[WORKFLOWS.md](WORKFLOWS.md)** for task-driven usage guidance.
 
 Skills are installed globally (`-g`) so they are available in all projects. To add more, edit the `SKILLS` array in [config.sh](config.sh) or install manually:

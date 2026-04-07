@@ -10,10 +10,9 @@ This is the complete inventory of every plugin, skill, agent, command, hook, MCP
   - [Code Review](#code-review-5-agents-1-command)
   - [Security Guidance](#security-guidance-1-hook)
   - [Commit Commands](#commit-commands-3-commands)
-  - [Skill Creator](#skill-creator-1-skill-1-agent)
   - [Claude Code Setup](#claude-code-setup-1-skill)
   - [Hookify](#hookify-1-skill-1-agent-4-commands)
-  - [CT](#ct-8-skills-5-agents-2-commands)
+  - [CT](#ct-9-skills-6-agents-2-commands)
   - [Engram](#engram-1-skill-mcp-server)
 - [Global Skills](#global-skills)
   - [Code Quality & Review](#code-quality--review-9-skills)
@@ -23,7 +22,6 @@ This is the complete inventory of every plugin, skill, agent, command, hook, MCP
   - [Databases](#databases-4-skills)
   - [Knowledge Management](#knowledge-management-5-skills)
   - [UI Components](#ui-components-1-skill)
-  - [Marketing & Growth](#marketing--growth-34-skills)
 - [MCP Servers](#mcp-servers)
 - [CLI Tools](#cli-tools)
 
@@ -97,17 +95,6 @@ Git workflow automation.
 | /commit-push-pr  | command | Branch + commit + push + PR in one step                      |
 | /clean_gone      | command | Clean up local branches deleted on remote (handles worktrees)|
 
-### Skill Creator (1 skill, 1 agent)
-
-Create, evaluate, improve, and benchmark agent skills.
-
-**Source:** claude-plugins-official
-
-| Name          | Type  | Description                                            |
-| ------------- | ----- | ------------------------------------------------------ |
-| skill-creator | skill | Full skill authoring workflow with evals and benchmarks|
-| eval-viewer   | agent | Skill performance evaluation                           |
-
 ### Claude Code Setup (1 skill)
 
 Codebase analysis for Claude Code automation recommendations.
@@ -133,7 +120,7 @@ Create custom hooks from natural language or conversation analysis.
 | /hookify:list          | command | List all configured hookify rules                                |
 | /hookify:configure     | command | Enable/disable hookify rules                                     |
 
-### CT (8 skills, 5 agents, 2 commands)
+### CT (9 skills, 6 agents, 2 commands)
 
 Code quality, security, refactoring, and development workflows.
 
@@ -153,6 +140,7 @@ Code quality, security, refactoring, and development workflows.
 | code-reviewer             | agent   | Autonomous code review seeking disconfirmation — best practices, security, performance |
 | code-simplifier           | agent   | Simplify code for clarity while preserving functionality                       |
 | deep-research             | agent   | Structured research specialist for external knowledge gathering                |
+| evaluator                 | agent   | Dynamic QA — runs the app, tests UX flows, scores criteria                     |
 | fixer                     | agent   | Targeted minimal fixes for critical review findings, verifies tests pass       |
 | refactor-scan             | agent   | Code quality coach — guides refactoring decisions post-TDD                     |
 | /ct:discover-aliases      | command | Scan shell aliases, generate Claude Code documentation                         |
@@ -173,7 +161,7 @@ Persistent memory across sessions via SQLite + FTS5. Disables built-in auto-memo
 
 ## Global Skills
 
-87 skills installed via `skills.sh`, organized into 8 categories.
+53 skills installed via `skills.sh`, organized into 7 categories.
 
 ### Code Quality & Review (9 skills)
 
@@ -189,7 +177,7 @@ Persistent memory across sessions via SQLite + FTS5. Disables built-in auto-memo
 | code-simplifier       | getsentry/skills| Simplify code for clarity, consistency, and maintainability     |
 | claude-settings-audit | getsentry/skills| Analyze repo and recommend Claude Code settings.json permissions|
 
-### Development Workflow (16 skills)
+### Development Workflow (15 skills)
 
 | Name                  | Source          | Description                                                     |
 | --------------------- | --------------- | --------------------------------------------------------------- |
@@ -208,7 +196,6 @@ Persistent memory across sessions via SQLite + FTS5. Disables built-in auto-memo
 | skill-creator         | getsentry/skills| Alias for skill-writer                                           |
 | sred-project-organizer| getsentry/skills| Organize projects into SRED format for submission                |
 | sred-work-summary     | getsentry/skills| Annual work summary grouped into SRED projects                   |
-| find-skills           | vercel-labs/skills | Discover available skills                                       |
 
 ### Web Research & Documentation (11 skills)
 
@@ -263,47 +250,6 @@ Persistent memory across sessions via SQLite + FTS5. Disables built-in auto-memo
 | Name   | Source    | Description                                                    |
 | ------ | --------- | -------------------------------------------------------------- |
 | shadcn | shadcn/ui | Manage shadcn/ui components: search registries, add, debug, style |
-
-### Marketing & Growth (34 skills)
-
-All sourced from coreyhaines31/marketingskills.
-
-| Name                      | Description                                                      |
-| ------------------------- | ---------------------------------------------------------------- |
-| ab-test-setup             | Plan and implement A/B tests and growth experiments              |
-| ad-creative               | Generate ad headlines, descriptions, and creative variations     |
-| ai-seo                    | Optimize content for AI search engines and LLM citations         |
-| analytics-tracking        | Set up and audit analytics tracking (GA4, events, UTMs)          |
-| churn-prevention          | Reduce churn with cancellation flows, save offers, retention strategies |
-| cold-email                | Write B2B cold emails and follow-up sequences                    |
-| competitor-alternatives   | Create competitor comparison and alternative pages               |
-| content-strategy          | Plan content strategy and topic coverage                         |
-| copy-editing              | Edit, review, and improve marketing copy                         |
-| copywriting               | Write marketing copy for any page type                           |
-| customer-research         | Conduct and synthesize customer research                         |
-| email-sequence            | Create email drip campaigns and lifecycle flows                  |
-| form-cro                  | Optimize lead capture and non-signup forms                       |
-| free-tool-strategy        | Plan free tools for marketing (engineering as marketing)         |
-| launch-strategy           | Plan product launches and feature announcements                  |
-| lead-magnets              | Create and optimize lead magnets                                 |
-| marketing-ideas           | 139+ marketing strategy ideas for SaaS                           |
-| marketing-psychology      | Apply behavioral psychology to marketing                         |
-| onboarding-cro            | Optimize post-signup activation and onboarding                   |
-| page-cro                  | Optimize marketing page conversions                              |
-| paid-ads                  | Manage Google Ads, Meta, LinkedIn campaigns                      |
-| paywall-upgrade-cro       | Optimize in-app paywalls and upsell screens                      |
-| popup-cro                 | Optimize popups, modals, and overlays                            |
-| pricing-strategy          | Pricing, packaging, and monetization decisions                   |
-| product-marketing-context | Product positioning and marketing context documents              |
-| programmatic-seo          | Template-based SEO pages at scale                                |
-| referral-program          | Create referral and affiliate programs                           |
-| revops                    | Revenue operations and lead lifecycle management                 |
-| sales-enablement          | Create sales collateral, pitch decks, one-pagers                 |
-| schema-markup             | Add and optimize schema markup and structured data               |
-| seo-audit                 | Audit and diagnose SEO issues                                    |
-| signup-flow-cro           | Optimize registration and trial flows                            |
-| site-architecture         | Plan website hierarchy, navigation, URL structure                |
-| social-content            | Create and schedule social media content                         |
 
 ---
 

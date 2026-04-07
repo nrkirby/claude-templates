@@ -103,6 +103,3 @@ PostgreSQL, MySQL, Vitess, and Neki (sharded Postgres) skills from PlanetScale. 
 
 CLI interaction, Obsidian-flavored markdown, Bases database views, and JSON Canvas. Triggered when working with `.md` files in Obsidian vaults or using `obsidian` CLI commands.
 
-### Marketing & Growth
-
-34 skills covering SEO, copywriting, CRO, pricing, ads, email, analytics, and more from coreyhaines31/marketingskills. Each skill is triggered by name (e.g., `seo-audit`, `copywriting`, `pricing-strategy`). See [SKILLS.md](SKILLS.md) for the full list.
