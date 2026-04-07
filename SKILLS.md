@@ -84,6 +84,16 @@ Automatic security warnings on file edits.
 | ----------------- | ---- | ---------------------------------------------------------------------- |
 | security-reminder | hook | PreToolUse hook on Edit/Write — warns about injection, XSS, unsafe patterns |
 
+### Security Scanning (1 hook)
+
+Automatic SAST scanning on file edits using Semgrep OSS.
+
+**Source:** ct plugin
+
+| Name             | Type | Description                                                                  |
+| ---------------- | ---- | ---------------------------------------------------------------------------- |
+| semgrep-on-edit  | hook | PostToolUse hook on Edit/Write — runs semgrep scan, blocks on findings. Skip with `SKIP_SEMGREP=1` |
+
 ### Commit Commands (3 commands)
 
 Git workflow automation.
@@ -256,3 +266,5 @@ Persistent memory across sessions via SQLite + FTS5. Disables built-in auto-memo
 | Gabb                    | Local code indexer for semantic code understanding   | Homebrew                  |
 | axe-core + pa11y        | WCAG accessibility auditing (runtime + batch)        | npm                       |
 | Nuclei + ZAP            | DAST security scanning (fast + deep)                 | Homebrew + Docker          |
+| Semgrep                 | OSS SAST scanner (PostToolUse security scanning)     | Homebrew                   |
+| Gitleaks                | Secret detection via global git pre-commit hook      | Homebrew                   |

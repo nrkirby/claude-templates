@@ -69,6 +69,8 @@ Task-driven guide for finding the right tool, skill, or command. Organized by wh
 |---|---|---|
 | Threat model a feature | ct:threat-modeling | Auto-activated for auth, payments, webhooks, OAuth; or say `threat model this` |
 | Scan running app for vulnerabilities | ct:dast-scan | `scan for vulnerabilities` — Nuclei fast scan + ZAP deep scan |
+| SAST scan on every edit | semgrep-on-edit hook | Automatic — runs after every Edit/Write, blocks on findings. Skip: `SKIP_SEMGREP=1` |
+| Detect secrets before commit | gitleaks git hook | Automatic — runs on `git commit`. Skip: `SKIP_GITLEAKS=1` |
 
 ## Research & Browser
 
