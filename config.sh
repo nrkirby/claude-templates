@@ -18,6 +18,7 @@ readonly TOOLS=(
     "engram"
     "gabb"
     "wcag"
+    "dast"
 )
 
 # Skills to install globally via skills.sh
