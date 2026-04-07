@@ -32,6 +32,17 @@
             "statusMessage": "Checking for pending reflections..."
           }
         ]
+      },
+      {
+        "matcher": "startup|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/lint/lint-detect.sh\"",
+            "timeout": 5,
+            "statusMessage": "Detecting project linters..."
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [
