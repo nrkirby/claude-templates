@@ -17,6 +17,7 @@ readonly TOOLS=(
     "agent_browser"
     "engram"
     "gabb"
+    "wcag"
 )
 
 # Skills to install globally via skills.sh
