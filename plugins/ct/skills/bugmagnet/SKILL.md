@@ -56,7 +56,11 @@ Categorise: **High** (core, errors, boundaries) → **Medium** (interactions, st
 
 For each test, highest priority first: write single test (or 2-3 related), name describes outcome ("returns X when Y"), run immediately. **Maximum 3 attempts per test** — document and move on.
 
-**When bug found:** create minimal reproduction, explore surrounding territory (bugs cluster), document in skipped test — **DO NOT FIX, only document.** Include: brief description, root cause, code location, expected vs actual, proposed fix.
+→ While writing tests, actual bug discovered in implementation → STOP. Do NOT fix the bug.
+  1. Create minimal reproduction test.
+  2. Explore 2-3 adjacent code areas (bugs cluster).
+  3. Document in skipped test: brief description, root cause, code location, expected vs actual, proposed fix.
+→ Return to test writing.
 
 **STOP** — Ask user if they want advanced coverage. *(Skip in autonomous mode — proceed to advanced if high-priority gaps remain.)*
 
