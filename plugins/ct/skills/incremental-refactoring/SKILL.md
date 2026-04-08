@@ -33,7 +33,7 @@ digraph refactoring {
 
 1. Read [guide.md](guide.md) for smells and catalog
 2. Scan for smells listed in guide.md
-3. **80/20 prioritize** — few refactorings, highest impact. Stop at diminishing returns
+3. **80/20 prioritize** → For each candidate: will this measurably improve readability, maintainability, or correctness? Yes → Include as HIGH priority. No → Exclude. Present only HIGH items. Explicitly state "Stopping here — remaining items are diminishing returns."
 4. Present smells classified as HIGH / MEDIUM / LOW. Do NOT pre-plan execution order
 
 **HARD STOP: End your response after presenting the analysis. Do NOT continue to Phase 2 in the same message. Do NOT show code changes, proposed extractions, or "here's what I would do" previews. The user must explicitly approve before you touch any code.**
