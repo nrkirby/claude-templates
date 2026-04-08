@@ -8,6 +8,11 @@ description: >
 
 ## MANDATORY FIRST STEP
 
+HARD GATE - Task Planning:
+→ Threat modeling begins → Has TodoWrite created structured tasks covering all phases below?
+  No → STOP. Create tasks before any analysis.
+  Yes → Proceed.
+
 **TodoWrite:** Create 28+ items covering:
 1. Data Flow Diagram with trust boundaries (4+ items)
 2. Threat enumeration per STRIDE category (12+ items, 2+ per category)
@@ -249,7 +254,8 @@ After identifying threats and scoring risk, select mitigations appropriate to yo
 
 ## Verification Checkpoint
 
-Before marking the threat model complete, verify ALL of the following with specific evidence:
+HARD GATE - Threat Model Completeness:
+→ About to mark threat modeling complete → Verify ALL of the following with specific evidence. Any check fails → Go back and fill the gap before completing.
 
 | Check | Required Evidence |
 |-------|-------------------|
@@ -261,7 +267,7 @@ Before marking the threat model complete, verify ALL of the following with speci
 | No OWASP Top 10 category left unaddressed | Map your threats to A01-A10, flag gaps |
 | Residual risk documented for accepted threats | "Accepting X because Y, revisit by Z date" |
 
-**If any check fails, go back and fill the gap. A threat model with blind spots is worse than no model (false confidence).**
+A threat model with blind spots is worse than no model (false confidence).
 
 ---
 
