@@ -48,7 +48,9 @@ ls .jscpd.json .jscpdrc .jscpdrc.json 2>/dev/null  # Check project config
 which jscpd || npm install -g jscpd                  # Check/install jscpd
 ```
 
-If a config file exists, **respect it** — run jscpd with no overriding flags so the project's thresholds and ignore patterns take effect.
+→ About to run jscpd → Does .jscpd.json (or variant) exist in project root?
+  Yes → Run with no overriding flags. Let project config drive thresholds and ignore patterns.
+  No → Use defaults (see "Without project config" below).
 
 If jscpd/npm unavailable, use the **Grep Fallback** section below. Tell the user: grep finds exact duplicates only.
 
@@ -66,7 +68,9 @@ jscpd --min-lines 10 --min-tokens 50 \
   --reporters json --output /tmp/jscpd-report --gitignore /path/to/code
 ```
 
-**Always use:** `--gitignore` (respect .gitignore), `--output /tmp/jscpd-report` (avoid flooding stdout), `--reporters json` (not console for large codebases).
+→ Constructing jscpd command → Verify three required flags present:
+  `--gitignore`? `--output /tmp/jscpd-report`? `--reporters json`?
+  Any missing → Add before executing.
 
 Tuning: `--min-lines` 5 (small) to 15-20 (large/verbose). `--format "javascript,typescript"` to scope languages.
 
