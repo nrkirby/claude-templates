@@ -40,18 +40,22 @@ Record the result — this is needed later to distinguish pre-existing failures 
 
 Set `iteration = 1` and `scope = <initial files>`.
 
+HARD GATE - Iteration Cap:
+→ `iteration` reaches 6 → STOP loop unconditionally. Report final status. Do not allow "just one more cycle."
+
 **LOOP** while `iteration <= 5`:
 
-Five iterations is the cap because experience shows that if critical findings persist beyond 3-4 cycles, the remaining issues typically need human judgement rather than automated fixing. The cap prevents wasted cycles.
+Five iterations is the cap because experience shows that if critical findings persist beyond 3-4 cycles, the remaining issues typically need human judgement rather than automated fixing.
 
 1. **REVIEW (iteration N)** — Announce: `Review iteration N/5`
    - Spawn the `code-reviewer` agent with scope as its input
    - Receive the findings report
 
-2. **TRIAGE** — Extract only **Critical** findings from the report
-   - If **zero** critical findings, break — the loop is done
-   - List the critical findings for visibility
-   - Only critical findings are actioned because warnings and suggestions are judgement calls best left to the author. Automating fixes for subjective issues risks introducing changes the user disagrees with.
+2. **TRIAGE**
+   → Report received → Extract only 🔴 Critical findings. Discard all warnings and suggestions.
+   → Zero critical findings? → Break loop, report clean.
+   → N critical findings? → List for visibility, pass to fixer.
+   Only critical findings are actioned because warnings and suggestions are judgement calls best left to the author.
 
 3. **FIX (iteration N)** — Announce: `Fix iteration N/5 — addressing N critical issue(s)`
    - Spawn the `fixer` agent, passing it:
