@@ -13,13 +13,15 @@ description: >
 
 ## The Iron Law
 
-**No optimization without baseline measurement. No exceptions.**
+HARD GATE - Baseline Requirement:
+→ Performance optimization task started → Do I have a recorded baseline metric (number + tool + conditions)?
+  No → STOP.
+    Has code already been changed?
+      Yes → Git stash changes, measure old code, re-apply, measure again.
+      No → Measure baseline NOW before any changes.
+  Yes → Proceed to profiling.
 
-Skipped baseline? You cannot validate improvement. Period.
-Already started without measuring? STOP. Measure NOW before continuing.
-Already finished without measuring? Roll back to old code, measure, then re-apply changes and measure again.
-
-**Violating the letter of this process IS violating the spirit.**
+No optimization without baseline measurement. No exceptions. Violating the letter of this process IS violating the spirit.
 
 ---
 
@@ -47,7 +49,9 @@ Record **tool + metric + value + conditions** (e.g., "k6 load test: p95 = 4.2s a
   - e.g., "orders query = 3.1s, 78% of total request time"
 - Determine root cause (N+1 queries, missing index, blocking I/O, serialization)
 
-**If profiling contradicts your assumption, trust the profiler.**
+→ Profiling complete → Does result match initial assumption?
+  No → Am I tempted to trust my assumption over the data? → STOP. Trust the profiler. Implement based on profiling data, not assumption.
+  Yes → Implement based on profiling.
 
 ### 3. Optimize and Validate
 
