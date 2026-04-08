@@ -17,7 +17,7 @@ Current time: $(date)
 ## Core Principles
 
 <clarify_first>
-If a request is ambiguous, ask one focused question before proceeding.
+→ Request received → Are there 2+ reasonable interpretations? Yes → STOP. Ask ONE focused clarifying question. Wait for answer before proceeding. No → Proceed.
 </clarify_first>
 
 <no_scope_creep>
@@ -37,39 +37,43 @@ Check for AGENTS.md alongside CLAUDE.md in project directories for agent workflo
 </discover_agents>
 
 <tool_priority>
-Prefer LSP (goToDefinition, findReferences, hover) first for exact results. Fall back to Gabb MCP for cross-file semantic search. Use Grep/Glob only as last resort. After locating a file, use LSP to navigate within it.
+→ Need to locate code → Can LSP resolve it (goToDefinition, findReferences, hover)? Yes → Use LSP. Stop. No → Can Gabb resolve it (gabb_symbol, gabb_structure)? Yes → Use Gabb. Stop. No → Use Grep/Glob as last resort. After locating a file, use LSP to navigate within it.
 </tool_priority>
 
 ## Context Preservation via Subagents
 
 **Default stance:** When uncertain, prefer subagent delegation.
 
-**Dispatch subagent when:**
-- Current conversation has valuable context worth preserving
-- Task involves reading/exploring code (file contents pollute context)
-- Task might expand beyond initial scope or needs fresh perspective
-- Both research AND implementation needed (separate concerns)
-
-**Red flag thoughts — stop and delegate instead:**
-"I'll just quickly...", "Simple enough inline", "Already have the context", "Faster without subagent overhead"
+→ About to do inline work (read files, explore code, implement) → Am I thinking "I'll just quickly..." / "Simple enough inline" / "Already have the context" / "Faster without subagent overhead"?
+  Yes → That's the red flag. Dispatch subagent instead.
+  No → Is current conversation context worth preserving, or does task involve reading/exploring code, or might expand beyond initial scope?
+    Yes → Dispatch subagent.
+    No → Proceed inline.
 
 ## Plan Convention
 
-Every implementation plan's final task must dispatch the `evaluator` agent against the project root for dynamic QA (run the app, test UX flows, score). If evaluator reports any criterion below 5/10, fix the issues before proceeding to `finishing-a-development-branch`.
+HARD GATE - Plan QA Checkpoint:
+→ Implementation plan tasks complete → Has evaluator agent run against project root with all criteria scored?
+  No → STOP. Dispatch evaluator. Wait for report.
+  Yes → Are ALL criteria >= 5/10?
+    No → Fix issues. Re-run evaluator.
+    Yes → Proceed to `finishing-a-development-branch`.
 
 ## Code Editing
 
 <comprehensive_bulk_changes>
-When making bulk code changes (replacing constants, fixing imports, etc.), always do a comprehensive scan for ALL instances of the pattern — not just the obvious ones. Check for related variants (URLs, endpoints, tokens) beyond the initially identified items.
+→ About to make bulk code change (replacing constants, fixing imports, etc.) → Before editing ANY file: search for base pattern + 3 common variants across entire codebase → Count total instances → Review each match → Only when search is exhaustive → Begin edits. Check for related variants (URLs, endpoints, tokens) beyond the initially identified items.
 </comprehensive_bulk_changes>
 
 <match_existing_patterns>
-When the user references a pattern from the main or develop branch (e.g., validation style, helper functions) while working in another branch, always check the main or develop branch first to match the existing approach exactly. Don't invent alternative implementations.
+→ Implementing feature that may have patterns in main/develop → Before coding: read existing pattern from main/develop (specific file, specific code) → Am I reproducing it exactly or inventing a variant? Variant → STOP. Ask user before proceeding. Exact match → Proceed.
 </match_existing_patterns>
 
 ## Git Operations
 
-- Delete: your changes OK | others' work → ask first
-- Before deleting for type/lint errors → ask (may break other agents)
+→ About to delete code/files/branches → Is this exclusively my changes from this session?
+  Yes → Delete.
+  No → STOP. Ask user before deleting.
+→ About to delete for type/lint errors → STOP. Ask first (may break other agents).
 - `.env*` / local config files: read-only, ask before changes
 - Quote paths containing `[]()` chars
