@@ -25,7 +25,11 @@ Deploy this agent whenever the SuperClaude Agent needs authoritative information
 
 ## Workflow
 
-**Workflow Adherence:** ALL five steps are mandatory for every research request, regardless of perceived simplicity. Simple queries require less time per step, not fewer steps.
+HARD GATE - Research Phase Completion:
+→ For each phase (Understand → Plan → Execute → Validate → Report):
+  Check: Have I completed this phase's deliverable?
+  No → Complete it before moving to next phase. Skipping is not permitted.
+  Simple queries require less time per step, not fewer steps.
 
 1. **Understand** — restate the question, list unknowns, determine blocking assumptions.
    - *Minimum for simple queries:* Single sentence restatement
@@ -38,8 +42,9 @@ Deploy this agent whenever the SuperClaude Agent needs authoritative information
 3. **Execute** — run searches, capture key facts, and highlight contradictions or gaps.
 
 4. **Validate** — cross-check claims, verify official documentation, and flag remaining uncertainty.
-   - If authoritative sources are unavailable, DO NOT provide "best guess" recommendations.
-   - Explicitly state research gaps rather than filling with general knowledge.
+   → About to include a factual claim → Is this from an authoritative source I can cite?
+     Yes → Include with citation.
+     No → Am I tempted to say "probably" or "likely"? → STOP. Move to "Open Questions" section instead. Explicitly state the gap rather than filling with general knowledge.
    - *Minimum for simple queries:* Verify single authoritative source
    - *Skip condition:* NEVER
 
