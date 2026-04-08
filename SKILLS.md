@@ -160,7 +160,6 @@ Code quality, security, refactoring, and development workflows.
 | performance-optimization  | skill   | Baseline, profile, optimize backend/API/database performance                   |
 | reflect                   | skill   | Self-reflection after work sessions — structured proposals with review gate    |
 | research                  | skill   | Systematic research with scientific methodology and evidence-based synthesis   |
-| revise-claude-md          | skill   | Update CLAUDE.md with session learnings                                        |
 | threat-modeling           | skill   | STRIDE framework threat analysis for auth, payments, APIs, webhooks            |
 | wcag-audit                | skill   | WCAG accessibility auditing — static analysis + axe-core runtime               |
 | code-reviewer             | agent   | Autonomous code review seeking disconfirmation — best practices, security, performance |
