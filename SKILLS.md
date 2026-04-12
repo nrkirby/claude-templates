@@ -184,7 +184,7 @@ Persistent memory across sessions via SQLite + FTS5. Disables built-in auto-memo
 
 ## Global Skills
 
-**47 skills total** — 32 from plugins (see [Plugins](#plugins) above) and 15 from [skills.sh](https://skills.sh) + tools (below).
+**48 skills total** — 32 from plugins (see [Plugins](#plugins) above) and 16 from [skills.sh](https://skills.sh) + tools (below).
 
 ### Code Quality & Review (4 skills)
 
@@ -204,12 +204,13 @@ Persistent memory across sessions via SQLite + FTS5. Disables built-in auto-memo
 | context7-cli         | upstash/context7    | Fetch library docs via ctx7 CLI                              |
 | defuddle             | kepano/obsidian-skills | Extract clean markdown from web pages (saves tokens vs WebFetch) |
 
-### Browser Automation (2 skills)
+### Browser Automation (3 skills)
 
 | Name             | Source                      | Description                                                    |
 | ---------------- | --------------------------- | -------------------------------------------------------------- |
 | agent-browser    | vercel-labs/agent-browser   | Browser automation CLI for AI agents (50+ commands)            |
 | dogfood          | vercel-labs/agent-browser   | Systematically explore and test web apps for bugs/UX issues    |
+| webapp-testing   | anthropics                  | Playwright-based local web app testing, screenshots, browser logs |
 
 ### Databases (1 skill)
 

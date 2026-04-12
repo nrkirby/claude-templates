@@ -82,6 +82,7 @@ Task-driven guide for finding the right tool, skill, or command. Organized by wh
 | Automate browser tasks | agent-browser | Say `open <url>`, `click`, `fill form`, or any browser interaction |
 | Visual UI testing / regression | agent-browser | `diff screenshot --baseline before.png`, `diff url <staging> <prod>`, viewport testing across breakpoints |
 | Test a web app (QA) | dogfood | Say `dogfood this app`, `QA this`, or `exploratory test` |
+| Test local web app with Playwright | webapp-testing | Say `test this page`, `take a screenshot`, or `check browser logs` |
 
 ## Memory & Context
 
