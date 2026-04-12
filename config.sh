@@ -46,6 +46,7 @@ readonly SKILLS=(
 
 # Claude plugin marketplaces (format: "owner/repo:name")
 readonly MARKETPLACES=(
+    "anthropics/claude-plugins-official:claude-plugins-official"
     "pvillega/claude-templates:claude-templates"
 )
 
