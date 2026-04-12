@@ -2,8 +2,8 @@
   "name": "claude-templates",
   "description": "Claude Templates marketplace - Skills, commands, and agents for Claude Code",
   "owner": {
-    "name": "pvillega",
-    "email": "pere.villega@gmail.com"
+    "name": "Pere Villega",
+    "email": "pvillega@aracon.com"
   },
   "plugins": [
     {
