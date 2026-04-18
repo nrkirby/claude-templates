@@ -472,6 +472,142 @@ add_shell_alias() {
     fi
 }
 
+# Runs opt-in installers from tools/optional/*.sh.
+# - Alphabetical enumeration of *.sh under tools/optional/.
+# - TTY: interactive menu (comma-separated numbers, 'all', or Enter to skip).
+# - Non-TTY: honors $INSTALL_OPTIONAL (empty=skip, 'all'=run all,
+#   or comma-separated basenames without .sh).
+# - Each chosen script runs via `bash <script>`; any non-zero exit becomes a
+#   warning (not a fatal error), so a bad optional doesn't block install.sh.
+run_optional_tools() {
+    local optional_dir="$SCRIPT_DIR/tools/optional"
+    [ -d "$optional_dir" ] || return 0
+
+    # Enumerate alphabetically. Guard against no-match glob (nullglob not set).
+    local scripts=()
+    local s
+    for s in "$optional_dir"/*.sh; do
+        [ -e "$s" ] || continue
+        scripts+=("$s")
+    done
+
+    if [ "${#scripts[@]}" -eq 0 ]; then
+        return 0
+    fi
+
+    # Helper: run one script by absolute path, with warning capture.
+    _run_one_optional() {
+        local script="$1"
+        local bname
+        bname="$(basename "$script" .sh)"
+        echo "→ Running $bname..."
+        if ! bash "$script"; then
+            add_warning "optional: $bname exited non-zero"
+        fi
+    }
+
+    # Helper: run by basename (without .sh). Warns on unknown name.
+    _run_optional_by_name() {
+        local want="$1"
+        local matched=0
+        local scr
+        for scr in "${scripts[@]}"; do
+            if [ "$(basename "$scr" .sh)" = "$want" ]; then
+                _run_one_optional "$scr"
+                matched=1
+                break
+            fi
+        done
+        if [ "$matched" -eq 0 ]; then
+            add_warning "optional: '$want' not found in tools/optional/"
+        fi
+    }
+
+    # -------- Non-interactive path --------
+    if [ ! -t 0 ]; then
+        local sel="${INSTALL_OPTIONAL:-}"
+        if [ -z "$sel" ]; then
+            echo "Skipping optional tools (non-interactive, INSTALL_OPTIONAL unset)"
+            return 0
+        fi
+        if [ "$sel" = "all" ]; then
+            local scr
+            for scr in "${scripts[@]}"; do
+                _run_one_optional "$scr"
+            done
+            return 0
+        fi
+        # Comma-separated basenames. IFS is scoped to this read only.
+        local names=()
+        IFS=',' read -ra names <<< "$sel"
+        local n
+        for n in "${names[@]}"; do
+            n="${n// /}"  # strip whitespace
+            [ -z "$n" ] && continue
+            _run_optional_by_name "$n"
+        done
+        return 0
+    fi
+
+    # -------- Interactive path (TTY) --------
+    echo ""
+    echo "## Optional tools"
+    echo ""
+    local i=1
+    local scr
+    for scr in "${scripts[@]}"; do
+        echo "  [$i] $(basename "$scr" .sh)"
+        i=$((i + 1))
+    done
+    echo ""
+    local answer=""
+    # shellcheck disable=SC2162
+    read -r -p "Select optional tools to install (comma-separated numbers, 'all', or Enter to skip): " answer || answer=""
+
+    # Empty → skip.
+    if [ -z "${answer// /}" ]; then
+        echo "Skipped."
+        return 0
+    fi
+
+    # 'all' → run everything.
+    if [ "${answer// /}" = "all" ]; then
+        local scr
+        for scr in "${scripts[@]}"; do
+            _run_one_optional "$scr"
+        done
+        return 0
+    fi
+
+    # Comma-separated numbers. Preserve input order, ignore duplicates.
+    # IFS is scoped to this read only.
+    local picks=()
+    IFS=',' read -ra picks <<< "$answer"
+
+    local seen=""
+    local tok
+    for tok in "${picks[@]}"; do
+        tok="${tok// /}"
+        [ -z "$tok" ] && continue
+        if ! [[ "$tok" =~ ^[0-9]+$ ]]; then
+            add_warning "optional: ignored invalid selection '$tok' (not a number)"
+            continue
+        fi
+        if [ "$tok" -lt 1 ] || [ "$tok" -gt "${#scripts[@]}" ]; then
+            add_warning "optional: ignored out-of-range selection '$tok'"
+            continue
+        fi
+        # Dedup via space-delimited seen list.
+        case " $seen " in
+            *" $tok "*) continue ;;
+        esac
+        seen="$seen $tok"
+
+        local idx=$((tok - 1))
+        _run_one_optional "${scripts[$idx]}"
+    done
+}
+
 # Prints LSP plugin and language server installation reference
 print_lsp_info() {
     echo "============================================"
@@ -832,6 +968,11 @@ echo ""
 
 # Prepare environment variable instructions
 prepare_env_instructions
+echo ""
+
+# Offer opt-in installers from tools/optional/*.sh as the final step.
+# Non-interactive shells honor $INSTALL_OPTIONAL (empty=skip, 'all', or CSV names).
+run_optional_tools
 echo ""
 
 # Print final summary
