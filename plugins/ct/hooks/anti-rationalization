@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
-# PreToolUse hook (matcher: TaskUpdate): blocks task completion when the
-# assistant's recent messages contain rationalization patterns.
+# PreToolUse hook (matcher: TodoWrite|TaskUpdate): blocks task completion
+# when the assistant's recent messages contain rationalization patterns.
+#
+# Fires when EITHER:
+#   - TaskUpdate sets .tool_input.status == "completed"  (top-level field)
+#   - TodoWrite contains any .tool_input.todos[] item with .status == "completed"
 #
 # Reads the JSONL transcript to extract the last assistant message, then
 # checks for phrases that indicate incomplete work being waved away.
@@ -9,9 +13,19 @@ set -euo pipefail
 
 INPUT=$(cat)
 
-# Only act when marking a task as completed
-STATUS=$(echo "$INPUT" | jq -r '.tool_input.status // empty')
-if [[ "$STATUS" != "completed" ]]; then
+# Only act when marking a task as completed.
+# Handles both payload shapes:
+#   - TaskUpdate: .tool_input.status (top-level)
+#   - TodoWrite:  .tool_input.todos[] with .status == "completed"
+# Note: `// ""` (not `// empty`) — `empty` short-circuits the pipeline before
+# the elif branch can run, silently disabling the TodoWrite path.
+COMPLETED=$(echo "$INPUT" | jq -r '
+  if (.tool_input.status // "") == "completed" then "yes"
+  elif ((.tool_input.todos // []) | map(select(.status == "completed")) | length) > 0 then "yes"
+  else "no"
+  end
+')
+if [[ "$COMPLETED" != "yes" ]]; then
   exit 0
 fi
 

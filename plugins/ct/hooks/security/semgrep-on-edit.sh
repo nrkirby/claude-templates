@@ -43,7 +43,7 @@ esac
 # Run semgrep on the single file with community rules
 # --quiet suppresses status messages, --error exits non-zero on findings
 FINDINGS=$(semgrep scan \
-  --config auto \
+  --config=p/ci \
   --quiet \
   --no-git-ignore \
   --error \

@@ -7,7 +7,7 @@ set -euo pipefail
 instruction='INSTRUCTION: MANDATORY SKILL ACTIVATION SEQUENCE
 
 Step 1 - EVALUATE (do this in your response):
-For each skill listed in the available skills, state: [skill-name] - YES/NO with one-line reason
+For each skill listed in the available skills, output '\''skill-name - YES: <one-line reason>'\'' ONLY if it plausibly applies to the user'\''s request. OMIT skills that do not apply — do NOT emit NO lines or "skill-name - NO" lines. This eliminates 60+ NO lines per turn while preserving the activation gate.
 
 Step 2 - ACTIVATE:
 IF any skills are YES -> Use Skill(skill-name) tool NOW for each YES skill, in priority order (process skills first, then implementation skills)

@@ -51,6 +51,7 @@
           {
             "type": "command",
             "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/skill-forced-eval\"",
+            "timeout": 5,
             "async": false
           }
         ]
@@ -108,6 +109,12 @@
             "type": "command",
             "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/engram/session-stop.sh\"",
             "timeout": 5,
+            "async": true
+          },
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/lint/lint-on-stop.sh\"",
+            "timeout": 30,
             "async": true
           }
         ]
