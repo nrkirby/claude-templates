@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # DAST scanning tools - install, update, and uninstall
-# Installs: Nuclei (brew/go), ZAP Docker image (optional, requires Docker)
+# Installs: Nuclei (brew), ZAP Docker image (optional, requires Docker)
 # Requires: critical_error, add_warning functions from parent script
 
 install_dast() {
@@ -11,17 +11,9 @@ install_dast() {
     if command -v nuclei &> /dev/null; then
         echo "Nuclei already installed: $(nuclei -version 2>&1 | head -1)"
     else
-        echo "Nuclei not found. Installing..."
-        if command -v brew &>/dev/null; then
-            if ! brew install nuclei; then
-                critical_error "Failed to install Nuclei via Homebrew"
-            fi
-        elif command -v go &>/dev/null; then
-            if ! go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest; then
-                critical_error "Failed to install Nuclei via go install"
-            fi
-        else
-            critical_error "Cannot install Nuclei: neither brew nor go found. Install manually: https://docs.projectdiscovery.io/tools/nuclei/install"
+        echo "Nuclei not found. Installing Nuclei via Homebrew..."
+        if ! brew install nuclei; then
+            critical_error "Failed to install Nuclei via Homebrew"
         fi
         echo "Nuclei installed successfully"
     fi
@@ -44,11 +36,7 @@ update_dast() {
 
     # Update Nuclei
     if command -v nuclei &> /dev/null; then
-        if command -v brew &>/dev/null; then
-            brew upgrade nuclei 2>/dev/null || echo "Nuclei already up to date"
-        elif command -v go &>/dev/null; then
-            go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
-        fi
+        brew upgrade nuclei 2>/dev/null || echo "Nuclei already up to date"
         # Update Nuclei templates
         nuclei -update-templates 2>/dev/null || true
     else
@@ -65,10 +53,7 @@ uninstall_dast() {
     echo "Removing DAST tools..."
 
     # Remove Nuclei
-    if command -v brew &>/dev/null; then
-        brew uninstall nuclei 2>/dev/null || true
-    fi
-    # Note: go-installed binaries must be removed manually from GOPATH/bin
+    brew uninstall nuclei 2>/dev/null || true
 
     # Remove ZAP Docker image
     if command -v docker &>/dev/null; then

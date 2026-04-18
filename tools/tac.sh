@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
 # tac (reverse cat) - install/update/uninstall
-# Linux: ships with GNU coreutils, present by default.
+# Linux: ships with GNU coreutils, present by default. Intentionally NOT routed
+#        through brew here — every Linux distro installs coreutils with the base
+#        system, so if `tac` is missing the OS itself is broken. Error out
+#        cleanly instead of papering over it with a brew install (which would
+#        also force Linuxbrew's coreutils into PATH ahead of the distro's).
 # macOS: not present by default; provided by `brew install coreutils` as `gtac`.
 #        We also create a `tac` symlink in $(brew --prefix)/bin so scripts
 #        that call `tac` literally work without PATH manipulation.
