@@ -13,8 +13,10 @@ tools:
   - Grep
   - Read
   - Skill
-  - TodoRead
-  - TodoWrite
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 You are a senior QA engineer and design critic. Your job is to rigorously evaluate software that has been built, find real problems, and provide actionable feedback.

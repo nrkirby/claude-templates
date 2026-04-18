@@ -29,19 +29,15 @@ readonly TOOLS=(
 readonly SKILLS=(
     "vercel-labs/agent-browser --skill agent-browser"
     "https://github.com/upstash/context7 --skill context7-cli"
-    "https://github.com/kepano/obsidian-skills --skill defuddle"
     "vercel-labs/agent-browser --skill dogfood"
     "getsentry/skills --skill find-bugs"
     "getsentry/skills --skill gha-security-review"
     "https://github.com/kepano/obsidian-skills --skill obsidian-cli"
-    "https://github.com/kepano/obsidian-skills --skill obsidian-markdown"
-    "https://github.com/planetscale/database-skills --skill postgres"
     "getsentry/skills --skill security-review"
     "https://github.com/shadcn/ui --skill shadcn"
     "getsentry/skills --skill skill-scanner"
     "https://github.com/tavily-ai/skills --skill tavily-cli"
     "https://github.com/tavily-ai/skills --skill tavily-map"
-    "https://smithery.ai/skills/anthropics/webapp-testing"
 )
 
 # Claude plugin marketplaces (format: "owner/repo:name")

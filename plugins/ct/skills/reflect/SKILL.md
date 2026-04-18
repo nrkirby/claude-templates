@@ -1,12 +1,14 @@
 ---
 name: reflect
 description: >
-  Self-reflection and memory lifecycle management. Generates structured reflections,
+  CLAUDE.md + engram memory lifecycle management. Generates structured reflections,
   reviews and applies them to CLAUDE.md, consolidates CLAUDE.md health, and maintains
-  engram memory hygiene. Use when the user runs /reflect, /reflect review, or
-  /reflect consolidate. Also triggers on "let's reflect", "what did we learn",
-  "session learnings", "write a reflection", "consolidate", "prune CLAUDE.md".
-user-invocable: true
+  engram memory hygiene.
+  Triggers ONLY on: /reflect, /reflect review, /reflect consolidate, or explicit
+  requests like "prune CLAUDE.md", "review my engram memories", "consolidate CLAUDE.md",
+  "audit CLAUDE.md health", "write a session reflection for REFLECTION.md".
+  DO NOT trigger on casual uses of "reflect on X", "let's reflect", or "what did we learn"
+  outside the context of CLAUDE.md / REFLECTION.md / engram memory hygiene.
 tools: Read, Edit, Write, Glob, Bash, AskUserQuestion
 ---
 

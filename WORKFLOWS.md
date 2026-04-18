@@ -22,8 +22,7 @@ Task-driven guide for finding the right tool, skill, or command. Organized by wh
 | Build a frontend UI | frontend-design skill | Auto-activated when asked to build web components, pages, or apps |
 | Add shadcn components | shadcn skill | Mention `shadcn`, or ask to add/search/fix shadcn components |
 | Look up library docs | context7-cli | Say `use context7 for <library>`, or mention `ctx7`/`context7` |
-| Search the web | tavily-cli | `search for X`, `look up X`, or `research X in depth` |
-| Extract content from a URL | defuddle | Auto-activated when a URL is provided to read or analyze |
+| Search the web | tavily-cli | `search for X`, `look up X`, `research X in depth`, or `extract content from <url>` |
 | Build with Claude API/SDK | claude-api | Auto-activated when code imports `anthropic` or `@anthropic-ai/sdk` |
 
 **HINT**: On the `CLAUDE.md` of the project, explain how to run the project, which test users to use, etc. so the agent can run and verify the changes itself.
@@ -76,13 +75,11 @@ Task-driven guide for finding the right tool, skill, or command. Organized by wh
 
 | When I need to... | Use | How |
 |---|---|---|
-| Deep codebase research | ct:deep-research agent | Dispatched for complex multi-file investigations |
-| Systematic research | ct:research | Say `research X` — scientific methodology with evidence-based synthesis |
+| Systematic / multi-source research | ct:research | `/ct:research X`, or say `research X in depth with citations` — scientific methodology, multi-hop reasoning, evidence-based synthesis, depth levels (quick/standard/deep/exhaustive) |
 | Map a website's URLs | tavily-map | Say `list URLs on <domain>` or `find pages on <site>` |
 | Automate browser tasks | agent-browser | Say `open <url>`, `click`, `fill form`, or any browser interaction |
 | Visual UI testing / regression | agent-browser | `diff screenshot --baseline before.png`, `diff url <staging> <prod>`, viewport testing across breakpoints |
 | Test a web app (QA) | dogfood | Say `dogfood this app`, `QA this`, or `exploratory test` |
-| Test local web app with Playwright | webapp-testing | Say `test this page`, `take a screenshot`, or `check browser logs` |
 
 ## Memory & Context
 
@@ -112,7 +109,7 @@ Task-driven guide for finding the right tool, skill, or command. Organized by wh
 
 ### Databases
 
-PostgreSQL skill from PlanetScale. Triggered on any database-related task — schema design, query tuning, indexing, operations.
+`ct:postgres` — deep PostgreSQL **operational** guide (MVCC, autovacuum, WAL, replication, PgBouncer, deadlock diagnosis). Triggers only on operational keywords ("autovacuum lag", "replication lag", "xid wraparound", "table bloat", etc.). Does NOT trigger on ordinary SQL writing or schema-first design — 4.7 handles those.
 
 ### Obsidian
 

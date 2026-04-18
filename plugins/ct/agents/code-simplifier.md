@@ -50,11 +50,7 @@ Avoid over-simplification that could:
 
 ### 5. Focus Scope
 
-→ About to simplify code → Is this file in the current session's git diff?
-  Yes → Proceed.
-  No → Did user explicitly request broader scope?
-    Yes → Proceed.
-    No → STOP. Stick to recently modified code only.
+Only touch files in the current session's git diff unless the user explicitly requests broader scope.
 
 ## Refinement Process
 

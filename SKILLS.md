@@ -17,9 +17,8 @@ This is the complete inventory of every plugin, skill, agent, command, hook, MCP
   - [Engram](#engram-1-skill-mcp-server)
 - [Global Skills](#global-skills)
   - [Code Quality & Review](#code-quality--review-4-skills)
-  - [Web Research & Documentation](#web-research--documentation-4-skills)
-  - [Browser Automation](#browser-automation-3-skills)
-  - [Databases](#databases-1-skill)
+  - [Web Research & Documentation](#web-research--documentation-3-skills)
+  - [Browser Automation](#browser-automation-2-skills)
   - [Knowledge Management](#knowledge-management-2-skills)
   - [UI Components](#ui-components-1-skill)
   - [Code Navigation](#code-navigation-1-skill)
@@ -141,7 +140,7 @@ Create, modify, and measure skill performance with evals and variance analysis.
 | -------------- | ----- | ------------------------------------------------------------------------ |
 | skill-creator  | skill | Create new skills, modify existing ones, run evals, benchmark performance |
 
-### CT (13 skills, 6 agents)
+### CT (14 skills, 5 agents)
 
 Code quality, security, refactoring, and development workflows.
 
@@ -158,13 +157,13 @@ Code quality, security, refactoring, and development workflows.
 | lint-guard                | skill   | Set up strict complexity linting — 17 languages, auto-detection, Stop hook     |
 | mutation-testing          | skill   | Diff-scoped mutation testing — Stryker, mutmut, cargo-mutants, PIT             |
 | performance-optimization  | skill   | Baseline, profile, optimize backend/API/database performance                   |
+| postgres                  | skill   | Deep PostgreSQL operational guide — MVCC, autovacuum, WAL, replication, pooling |
 | reflect                   | skill   | Self-reflection after work sessions — structured proposals with review gate    |
 | research                  | skill   | Systematic research with scientific methodology and evidence-based synthesis   |
 | threat-modeling           | skill   | STRIDE framework threat analysis for auth, payments, APIs, webhooks            |
 | wcag-audit                | skill   | WCAG accessibility auditing — static analysis + axe-core runtime               |
 | code-reviewer             | agent   | Autonomous code review seeking disconfirmation — best practices, security, performance |
 | code-simplifier           | agent   | Simplify code for clarity while preserving functionality                       |
-| deep-research             | agent   | Structured research specialist for external knowledge gathering                |
 | evaluator                 | agent   | Dynamic QA — runs the app, tests UX flows, scores criteria                     |
 | fixer                     | agent   | Targeted minimal fixes for critical review findings, verifies tests pass       |
 | refactor-scan             | agent   | Code quality coach — guides refactoring decisions post-TDD                     |
@@ -184,7 +183,7 @@ Persistent memory across sessions via SQLite + FTS5. Disables built-in auto-memo
 
 ## Global Skills
 
-**48 skills total** — 32 from plugins (see [Plugins](#plugins) above) and 16 from [skills.sh](https://skills.sh) + tools (below).
+**46 skills total** — 33 from plugins (see [Plugins](#plugins) above) and 13 from [skills.sh](https://skills.sh) + tools (below).
 
 ### Code Quality & Review (4 skills)
 
@@ -195,28 +194,20 @@ Persistent memory across sessions via SQLite + FTS5. Disables built-in auto-memo
 | gha-security-review   | getsentry/skills| GitHub Actions workflow security review                         |
 | skill-scanner         | getsentry/skills| Scan agent skills for security issues                           |
 
-### Web Research & Documentation (4 skills)
+### Web Research & Documentation (3 skills)
 
 | Name                 | Source              | Description                                                  |
 | -------------------- | ------------------- | ------------------------------------------------------------ |
 | tavily-cli           | tavily-ai/skills    | Full Tavily CLI: search, extract, crawl, research            |
 | tavily-map           | tavily-ai/skills    | Discover and list all URLs on a website                      |
 | context7-cli         | upstash/context7    | Fetch library docs via ctx7 CLI                              |
-| defuddle             | kepano/obsidian-skills | Extract clean markdown from web pages (saves tokens vs WebFetch) |
 
-### Browser Automation (3 skills)
+### Browser Automation (2 skills)
 
 | Name             | Source                      | Description                                                    |
 | ---------------- | --------------------------- | -------------------------------------------------------------- |
 | agent-browser    | vercel-labs/agent-browser   | Browser automation CLI for AI agents (50+ commands)            |
 | dogfood          | vercel-labs/agent-browser   | Systematically explore and test web apps for bugs/UX issues    |
-| webapp-testing   | anthropics                  | Playwright-based local web app testing, screenshots, browser logs |
-
-### Databases (1 skill)
-
-| Name     | Source                      | Description                                                     |
-| -------- | --------------------------- | --------------------------------------------------------------- |
-| postgres | planetscale/database-skills | PostgreSQL optimization, query tuning, and troubleshooting      |
 
 ### Knowledge Management (2 skills)
 

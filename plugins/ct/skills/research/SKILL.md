@@ -1,11 +1,13 @@
 ---
 name: research
 description: >
-  Use when conducting comprehensive research — applies scientific methodology with
-  adaptive strategies, multi-hop reasoning, and evidence-based synthesis.
-  Use this skill when the user asks to research a topic, investigate something,
-  find out about recent developments, compare approaches, or needs information
-  from multiple sources synthesized with citations.
+  Use ONLY when the user explicitly requests multi-source research synthesis with citations
+  — e.g., "/ct:research X", "research X in depth with citations", "investigate Y across
+  authoritative sources", "compare approaches and cite sources". Applies scientific methodology
+  with multi-hop reasoning and evidence-based synthesis; uses tavily-cli and WebSearch under the hood.
+  DO NOT trigger for: simple factual questions, single-source lookups, casual "research this"
+  one-liners, codebase exploration, or informal fact-finding. For those, use WebSearch /
+  tavily-cli / WebFetch directly.
 tools: WebSearch, WebFetch, Agent, Skill, Read, Grep
 ---
 
@@ -37,6 +39,14 @@ Don't use when:
 - The question can be answered by reading local codebase files
 - Pure brainstorming or ideation (use brainstorming skill)
 
+## Boundaries (DO NOT)
+
+- **Do NOT write implementation code or code examples** — this skill gathers external knowledge; hand off to implementation skills/agents.
+- **Do NOT make architectural or technology decisions for the user** — present findings neutrally; defer the choice.
+- **Do NOT skip workflow steps or citation requirements** — all four phases are mandatory regardless of query simplicity. Simple queries mean less *time* per step, not fewer steps.
+- **Do NOT provide "best guess" recommendations when authoritative sources are unavailable** — move the gap to the Open Questions section instead of filling with general knowledge.
+- **Do NOT use general-knowledge statements as findings** — every factual claim must cite an authoritative source or be moved to Open Questions.
+
 ## Core Approach
 
 Think like a research scientist crossed with an investigative journalist:
@@ -57,6 +67,8 @@ HARD GATE - Research Phase Completion:
   No → Complete it before moving to next phase. Skipping is not permitted.
 
 ### Phase 1: Discovery
+- Restate the question in one sentence; list unknowns; flag blocking assumptions
+- Choose depth: `quick` (single authoritative source), `standard` (2-3 sources cross-referenced), `deep` (multi-hop investigation with contradictions resolved), `exhaustive` (comprehensive survey with confidence levels per claim)
 - Formulate query (choose planning strategy: Planning-Only, Intent-Planning, or Unified)
 - Execute broad searches in parallel (use Tavily)
 - Assess sources (credibility, bias, recency)
@@ -72,6 +84,12 @@ HARD GATE - Research Phase Completion:
 - Connect information across sources
 - Identify patterns, contradictions, gaps
 - Distinguish facts from interpretation
+
+HARD GATE - Citation-or-gap rule:
+→ About to include a factual claim in the synthesis → Is this from an authoritative source I can cite?
+  Yes → Include with citation.
+  No → Am I tempted to say "probably" / "likely" / "typically"? → STOP. Move to Open Questions section instead. Explicitly state the gap rather than filling with general knowledge.
+
 - Self-reflect: synthesis coherent? Evidence sufficient?
 
 ### Phase 4: Reporting
@@ -79,6 +97,23 @@ HARD GATE - Research Phase Completion:
 - Cite all sources
 - Acknowledge limitations
 - Provide actionable insights
+
+**Report template (default structure):**
+
+```
+🧭 Goal: <one-line restatement of the question>
+
+📊 Findings
+- <bullet>
+- <bullet>
+
+🔗 Sources
+| # | URL | Title | Credibility | Note |
+|---|-----|-------|-------------|------|
+
+🚧 Open questions / suggested follow-up
+- <explicit gap or uncertainty>
+```
 
 ## Tool Orchestration Guidelines
 

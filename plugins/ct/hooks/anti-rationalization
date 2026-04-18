@@ -29,15 +29,26 @@ if [[ -z "$LAST_MSG" ]]; then
   exit 0
 fi
 
-# Rationalization patterns (case-insensitive)
+# Rationalization patterns (case-insensitive, substring match)
+# Patterns derived from empirical scan of history.jsonl (2026-04-17).
 PATTERNS=(
-  'pre-existing'
-  'pre existing'
+  # --- Scope dismissal
   'out of scope'
-  'too many issues'
-  'too many errors'
   'beyond the scope'
   'outside the scope'
+  'avoid scope creep'
+  'unrelated to this'
+  'unrelated to the'
+
+  # --- Authorship-based dismissal
+  'pre-existing'
+  'pre existing'
+  'not introduced by'
+  'not my change'
+  'not my regression'
+  'not my concern'
+
+  # --- Explicit deferral
   'follow-up task'
   'follow up task'
   'separate follow-up'
@@ -46,8 +57,25 @@ PATTERNS=(
   'fix later'
   'defer to'
   'leave for now'
-  'not going to fix'
   'skip for now'
+  'tackle later'
+  'revisit later'
+  'in a later task'
+
+  # --- Value dismissal
+  'too many issues'
+  'too many errors'
+  'not going to fix'
+  'not worth'
+  'nice-to-have'
+  'nice to have'
+  'low-value'
+  'low value'
+  'not critical'
+  'not a blocker'
+  'not blocking'
+  'acceptable trade-off'
+  'acceptable given'
 )
 
 LOWER_MSG=$(echo "$LAST_MSG" | tr '[:upper:]' '[:lower:]')

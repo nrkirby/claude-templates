@@ -1,6 +1,17 @@
 ---
 name: bugmagnet
-description: Discover edge cases and test coverage gaps through systematic analysis. Use when analysing test coverage, finding bugs, hunting for edge cases, reviewing code for robustness, or when code-reviewer identifies test gaps. Also use when the user says things like "what could go wrong", "is this well tested", "find holes in my tests", "what am I missing", or asks about edge cases for any function or module.
+description: >
+  Discover edge cases and test coverage gaps through systematic analysis. Use when
+  analysing TEST coverage, hunting for edge cases, or when code-reviewer identifies
+  test gaps. Triggers on "find holes in my tests", "what could go wrong", "is this
+  well tested", "what edge cases am I missing".
+  When to pick bugmagnet vs alternatives:
+  - find-bugs → branch-diff bug scan (uses git diff, scoped to recent changes)
+  - security-review → OWASP-categorised vulnerability audit
+  - code-review → PR-style review with comment threads
+  - ct:bugmagnet → test-gap edge-case discovery (THIS one)
+  If the question is "are my TESTS missing cases?", use bugmagnet. Otherwise pick one
+  of the three above.
 credit: "Adapted from channingwalton/dotfiles (https://github.com/channingwalton/dotfiles)"
 ---
 

@@ -135,14 +135,13 @@ Two layers of automated security scanning are installed:
 
 ## Skills
 
-This template provides **48 skills total** — 32 from [plugins](#plugins) (Superpowers 14, CT 13, plus Frontend Design, Claude Code Setup, Hookify, Skill Creator, Engram) and 16 global skills from [skills.sh](https://skills.sh) + tools:
+This template provides **46 skills total** — 33 from [plugins](#plugins) (Superpowers 14, CT 14, plus Frontend Design, Claude Code Setup, Hookify, Skill Creator, Engram) and 13 global skills from [skills.sh](https://skills.sh) + tools:
 
 | Category | Count | Sources | Highlights |
 |----------|-------|---------|------------|
 | Code Quality & Review | 4 | getsentry/skills | find-bugs, security-review, GHA security, skill-scanner |
-| Web Research & Documentation | 4 | tavily-ai, upstash/context7, kepano | tavily-cli, tavily-map, library docs |
-| Browser Automation | 3 | vercel-labs, anthropics | agent-browser, dogfood (QA), webapp-testing |
-| Databases | 1 | planetscale | PostgreSQL |
+| Web Research & Documentation | 3 | tavily-ai, upstash/context7 | tavily-cli, tavily-map, library docs |
+| Browser Automation | 2 | vercel-labs | agent-browser, dogfood (QA) |
 | Knowledge Management | 2 | kepano/obsidian-skills | Obsidian CLI, markdown |
 | UI Components | 1 | shadcn/ui | Component management and debugging |
 | Code Navigation | 1 | gabb-software | Semantic file exploration |

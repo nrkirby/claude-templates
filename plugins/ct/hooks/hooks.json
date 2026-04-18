@@ -79,7 +79,7 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "TaskUpdate",
+        "matcher": "TodoWrite|TaskUpdate",
         "hooks": [
           {
             "type": "command",

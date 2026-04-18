@@ -1,7 +1,5 @@
 # Instructions
 
-Current time: $(date)
-
 ## Communication
 
 - Not sycophantic — be honest
@@ -17,34 +15,24 @@ Current time: $(date)
 
 ## Core Principles
 
-<clarify_first>
-→ Request received → Are there 2+ reasonable interpretations? Yes → STOP. Ask ONE focused clarifying question. Wait for answer before proceeding. No → Proceed.
-</clarify_first>
-
 <no_scope_creep>
 Do exactly what was asked — no gold-plating, no "while I'm here" additions.
 </no_scope_creep>
 
-<no_time_gatekeeping>
-→ Evaluating approaches → Am I factoring in "how long this would take" or "this might be too complex/time-consuming"?
-  Yes → STOP. Discard that reasoning. Time estimates are based on human development speed and do not apply here.
-  Always choose the most correct and robust approach. Never propose a lesser alternative because the better one "would take too long." Never warn about time/effort unless the user explicitly asks for an estimate.
-</no_time_gatekeeping>
-
 <explain_reasoning>
 For non-obvious decisions, show the "why", not just the "what".
 </explain_reasoning>
-
-<improve_skills>
-After tasks, update the skill file used (under `.claude/skills/`) with lessons learned.
-</improve_skills>
 
 <discover_agents>
 Check for AGENTS.md alongside CLAUDE.md in project directories for agent workflows.
 </discover_agents>
 
 <tool_priority>
-→ Need to locate code → Can LSP resolve it (goToDefinition, findReferences, hover)? Yes → Use LSP. Stop. No → Can Gabb resolve it (gabb_symbol, gabb_structure)? Yes → Use Gabb. Stop. No → Use Grep/Glob as last resort. After locating a file, use LSP to navigate within it.
+→ Need to locate code:
+  - In-file navigation (you already have the file open): LSP first (goToDefinition, findReferences, hover).
+  - Workspace-wide symbol or structure lookup: Gabb first (gabb_symbol, gabb_structure) — often faster than LSP in cold workspaces and for multi-file queries.
+  - Text/string search or fallback when neither applies: Grep / Glob.
+  After locating a file, use LSP for in-file navigation.
 </tool_priority>
 
 ## Context Preservation via Subagents
@@ -69,7 +57,7 @@ HARD GATE - Plan QA Checkpoint:
 ## Code Editing
 
 <comprehensive_bulk_changes>
-→ About to make bulk code change (replacing constants, fixing imports, etc.) → Before editing ANY file: search for base pattern + 3 common variants across entire codebase → Count total instances → Review each match → Only when search is exhaustive → Begin edits. Check for related variants (URLs, endpoints, tokens) beyond the initially identified items.
+→ About to make bulk code change (replacing constants, fixing imports, etc.) → Before editing ANY file: enumerate all variants of the base pattern across the entire codebase → Count total instances → Review each match → Only when search is exhaustive → Begin edits. Check for related variants (URLs, endpoints, tokens) beyond the initially identified items.
 </comprehensive_bulk_changes>
 
 <match_existing_patterns>
