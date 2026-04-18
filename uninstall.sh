@@ -318,6 +318,40 @@ remove_auto_compact() {
     fi
 }
 
+remove_ntfy_topic() {
+    echo "Removing NTFY_TOPIC from ~/.claude/settings.json..."
+    local settings="$HOME/.claude/settings.json"
+
+    if [ ! -f "$settings" ]; then
+        echo "  ~/.claude/settings.json not found, skipping"
+        return 0
+    fi
+
+    if ! jq empty "$settings" 2>/dev/null; then
+        add_warning "~/.claude/settings.json is not valid JSON, skipping NTFY_TOPIC removal"
+        return 0
+    fi
+
+    # Idempotent: if NTFY_TOPIC is absent, nothing to do.
+    if ! jq -e '.env | has("NTFY_TOPIC")' "$settings" > /dev/null 2>&1; then
+        echo "  NTFY_TOPIC not set, skipping"
+        return 0
+    fi
+
+    if [ "$DRY_RUN" = true ]; then
+        echo "  [dry-run] Would remove .env.NTFY_TOPIC from $settings"
+        return 0
+    fi
+
+    local tmp="${settings}.tmp"
+    if jq 'del(.env.NTFY_TOPIC)' "$settings" > "$tmp" && mv "$tmp" "$settings"; then
+        echo "  Removed NTFY_TOPIC from $settings"
+    else
+        rm -f "$tmp"
+        add_warning "Failed to remove NTFY_TOPIC from $settings"
+    fi
+}
+
 remove_shell_alias() {
     echo "Removing 'cl' alias from shell config files..."
 
@@ -429,11 +463,14 @@ echo ""
 uninstall_cli_tools
 echo ""
 
-# Remove autoCompactEnabled from ~/.claude.json
+# Remove autoCompactEnabled from ~/.claude.json and NTFY_TOPIC from settings.json
 if ! command -v jq &> /dev/null; then
     add_warning "jq not found. Skipping autoCompactEnabled removal from ~/.claude.json."
+    add_warning "jq not found. Skipping NTFY_TOPIC removal from ~/.claude/settings.json."
 else
     remove_auto_compact
+    echo ""
+    remove_ntfy_topic
 fi
 echo ""
 

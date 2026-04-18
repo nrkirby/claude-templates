@@ -340,6 +340,82 @@ merge_json_configs() {
     fi
 }
 
+# Generates and registers a secret NTFY_TOPIC in ~/.claude/settings.json env block.
+# Idempotent: if NTFY_TOPIC is already set (non-empty string), prints a skip
+# message and returns. The ntfy notification hook at
+# plugins/ct/hooks/notify/ntfy.sh silently no-ops when the topic is unset.
+configure_ntfy_topic() {
+    echo "Configuring NTFY_TOPIC for ntfy notification hook..."
+
+    local settings="$HOME/.claude/settings.json"
+
+    if [ ! -f "$settings" ]; then
+        add_warning "~/.claude/settings.json not found, skipping NTFY_TOPIC configuration"
+        return 0
+    fi
+
+    if ! jq empty "$settings" 2>/dev/null; then
+        add_warning "~/.claude/settings.json is not valid JSON, skipping NTFY_TOPIC configuration"
+        return 0
+    fi
+
+    # Idempotency: if NTFY_TOPIC is already a non-empty string, don't overwrite.
+    local existing
+    existing=$(jq -r '.env.NTFY_TOPIC // ""' "$settings" 2>/dev/null)
+    if [ -n "$existing" ]; then
+        echo "NTFY_TOPIC already configured, skipping"
+        return 0
+    fi
+
+    # Generate a secret, hard-to-guess topic. Prefer $USER; fall back to
+    # $(whoami); if both are unavailable, use just "claude-<hex>".
+    local hex
+    if ! hex=$(openssl rand -hex 8 2>/dev/null) || [ -z "$hex" ]; then
+        add_warning "openssl rand failed, skipping NTFY_TOPIC configuration"
+        return 0
+    fi
+
+    local user_part="${USER:-}"
+    if [ -z "$user_part" ]; then
+        user_part="$(whoami 2>/dev/null || true)"
+    fi
+
+    local topic
+    if [ -n "$user_part" ]; then
+        topic="claude-${user_part}-${hex}"
+    else
+        topic="claude-${hex}"
+    fi
+
+    # Write atomically via jq. `.env.NTFY_TOPIC = $t` creates .env if missing.
+    local tmp="${settings}.tmp"
+    if ! jq --arg t "$topic" '.env.NTFY_TOPIC = $t' "$settings" > "$tmp"; then
+        rm -f "$tmp"
+        add_warning "Failed to write NTFY_TOPIC into $settings"
+        return 0
+    fi
+    if ! mv "$tmp" "$settings"; then
+        rm -f "$tmp"
+        add_warning "Failed to persist NTFY_TOPIC update to $settings"
+        return 0
+    fi
+
+    # Validate the write landed and matches what we set.
+    local written
+    written=$(jq -re '.env.NTFY_TOPIC' "$settings" 2>/dev/null || true)
+    if [ "$written" != "$topic" ]; then
+        add_warning "NTFY_TOPIC write did not round-trip (expected '$topic', got '$written')"
+        return 0
+    fi
+
+    echo ""
+    echo "NTFY_TOPIC generated and registered in ~/.claude/settings.json:"
+    echo "  Topic:     $topic"
+    echo "  Subscribe: https://ntfy.sh/$topic  (open in browser or ntfy mobile app)"
+    echo "  Test:      curl -d \"test\" https://ntfy.sh/$topic"
+    echo ""
+}
+
 # Adds shell alias export for Claude Code's SessionStart hook
 # Writes aliases to ~/.claude/shell-aliases.txt on every new shell
 configure_shell_alias_export() {
@@ -738,6 +814,12 @@ echo ""
 
 # Update JSON configurations
 merge_json_configs
+echo ""
+
+# Generate and register secret NTFY_TOPIC in ~/.claude/settings.json env block
+# so the ntfy notification hook (plugins/ct/hooks/notify/ntfy.sh) works without
+# manual setup. Idempotent — no-op if NTFY_TOPIC is already configured.
+configure_ntfy_topic
 echo ""
 
 # Configure shell alias export for Claude Code
