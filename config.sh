@@ -19,6 +19,7 @@ readonly TOOLS=(
     "rg"
     "rtk"
     "semgrep"
+    "tac"
     "tavily"
     "wcag"
 )
