@@ -22,10 +22,25 @@ DIM='\033[2m'
 BOLD='\033[1m'
 RESET='\033[0m'
 
-# --- Git branch ---
+# --- Git branch + diff stats (tracked +/-, untracked ?) ---
 BRANCH=""
+GIT_STATS=""
 if git rev-parse --git-dir > /dev/null 2>&1; then
   BRANCH=$(git branch --show-current 2>/dev/null)
+  DIFF_PART=$(git diff HEAD --shortstat 2>/dev/null | awk '
+    {
+      for (i=1; i<=NF; i++) {
+        if ($i ~ /insertion/) ins=$(i-1)
+        if ($i ~ /deletion/)  del=$(i-1)
+      }
+      if (ins+0 || del+0) printf "+%d/-%d", ins+0, del+0
+    }')
+  UNTRACKED=$(git ls-files --others --exclude-standard 2>/dev/null | wc -l | tr -d ' ')
+  GIT_STATS="$DIFF_PART"
+  if [ "${UNTRACKED:-0}" -gt 0 ]; then
+    [ -n "$GIT_STATS" ] && GIT_STATS="$GIT_STATS "
+    GIT_STATS="${GIT_STATS}?${UNTRACKED}"
+  fi
 fi
 
 # --- Context bar ---
@@ -56,10 +71,15 @@ rate_color() {
   else echo -ne "$GREEN"; fi
 }
 
-# --- Line 1: folder | branch | thinking mode ---
+# --- Line 1: folder | branch (+stats) | output style (if non-default) ---
 LINE1="${CYAN}📁 ${DIR##*/}${RESET}"
-[ -n "$BRANCH" ] && LINE1="${LINE1} ${DIM}│${RESET} ${GREEN}🌿 ${BRANCH}${RESET}"
-LINE1="${LINE1} ${DIM}│${RESET} ${YELLOW}💭 ${STYLE}${RESET}"
+if [ -n "$BRANCH" ]; then
+  LINE1="${LINE1} ${DIM}│${RESET} ${GREEN}🌿 ${BRANCH}${RESET}"
+  [ -n "$GIT_STATS" ] && LINE1="${LINE1} ${YELLOW}${GIT_STATS}${RESET}"
+fi
+if [ -n "$STYLE" ] && [ "$STYLE" != "default" ] && [ "$STYLE" != "—" ]; then
+  LINE1="${LINE1} ${DIM}│${RESET} ${YELLOW}💭 ${STYLE}${RESET}"
+fi
 echo -e "$LINE1"
 
 # --- Line 2: model | context bar | 5h rate | 7d rate ---
