@@ -12,7 +12,7 @@ description: >
   "why did this crash", "what's causing this stack trace", "help me
   understand this error", or pastes a multi-line stack/panic/traceback. The
   output points at the next diagnostic step — not a patch. For the patch,
-  dispatch the `fixer` agent afterwards.
+  dispatch the `debugger` agent afterwards to reproduce, verify, and fix.
 tools: Read, Grep, Glob, Skill
 model: opus
 color: blue
@@ -28,7 +28,7 @@ The value of this skill is *separation of diagnosis from action*. Jumping to a f
 
 - Does NOT edit code.
 - Does NOT reproduce the error — that is a separate test run.
-- Does NOT propose a patch. The output is a hypothesis tree. Dispatch `fixer` afterwards if needed.
+- Does NOT propose a patch. The output is a hypothesis tree. Dispatch the `debugger` agent afterwards to reproduce, verify, and fix.
 - Does NOT execute commands. Analysis-only — Bash is intentionally not in the tool list.
 
 ## Workflow
@@ -164,9 +164,9 @@ Recommend exactly ONE of the following:
 - "Check recent commits touching this file: `git log -5 --oneline <path>`."
 - "Inspect the caller frame (line N in `<file>`) — the null likely originates one frame up."
 
-Do NOT propose a code change. That is the `fixer` agent's job. Call it out explicitly:
+Do NOT propose a code change. Runtime failures go to the `debugger` agent, which reproduces, verifies, and fixes. Call it out explicitly:
 
-> To patch this, dispatch the `fixer` agent with H1 as input.
+> To patch this, dispatch the `debugger` agent with H1 as input — it will reproduce, verify, and produce a minimal fix.
 
 ---
 
@@ -198,7 +198,7 @@ H3 (worth checking): ...
 <exactly one recommended diagnostic>
 
 ### To apply a fix
-Dispatch the `fixer` agent with H1 as input.
+Dispatch the `debugger` agent with H1 as input.
 ```
 
 ---
@@ -218,7 +218,7 @@ Both gates STOP the skill before Phase 5 when tripped:
 
 | Thought | Reality |
 |---------|---------|
-| "I'll just apply the fix" | Out of scope. Hand off to `fixer`. |
+| "I'll just apply the fix" | Out of scope. Hand off to `debugger`. |
 | "The top frame is in node_modules so the bug is there" | No. The proximate cause is the top *user* frame. Library frames are the context, not the cause. |
 | "I can tell what the bug is without reading the code" | Read the function body at the frame's line. Every time. |
 | "All 3 hypotheses are equally likely" | Then your evidence is thin. Collapse to 1 H1 and ask for more context. |

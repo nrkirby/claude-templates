@@ -21,13 +21,13 @@ color: blue
 
 Remote CI failure diagnosis. Single-snapshot pull of the failing run, commit correlation, ranked hypotheses, fix proposal for user review.
 
-The value of this skill is that it separates *diagnosis* from *fixing*. It produces a root-cause hypothesis grounded in evidence (log excerpts + commit SHAs) so the user — or a follow-up `fixer` dispatch — can act with context instead of guessing.
+The value of this skill is that it separates *diagnosis* from *fixing*. It produces a root-cause hypothesis grounded in evidence (log excerpts + commit SHAs) so the user — or a follow-up `debugger` dispatch — can act with context instead of guessing.
 
 **Language/ecosystem agnostic.** The correlation between log evidence and commit history is purely textual (file paths, symbol names, error strings). This skill does NOT interpret language-specific build output — it surfaces the error verbatim and ranks which recent commits most plausibly caused it. Hypothesis patterns (dependency resolution failure, missing env var, test assertion diff, etc.) are inferred from the error text itself, not from a preconfigured language list. Works identically for any project that runs on GitHub Actions regardless of the code's language or framework.
 
 ## Non-goals
 
-- Does NOT apply fixes. That is the `fixer` agent's job.
+- Does NOT apply fixes. Runtime failures go to the `debugger` agent, which reproduces, verifies, and fixes.
 - Does NOT restart, rerun, or cancel the run.
 - Does NOT tail logs interactively. Single snapshot only.
 - Does NOT touch workflow YAML. For workflow-file security audits use `gha-security-review`.
@@ -172,7 +172,7 @@ Reasoning: <1-3 sentences tying the diff to the log evidence>
 
 Offer one explicit follow-up option:
 
-> To apply this fix, dispatch the `fixer` agent with this diff as input, or ask for a `code-reviewer` pass first.
+> To apply this fix, dispatch the `debugger` agent with this diff as input — it will reproduce the failure locally, verify the fix flips red to green, and produce a minimal patch. Or ask for a `code-reviewer` pass first.
 
 ---
 
@@ -210,7 +210,7 @@ C3 [LOW]: ...
 Reasoning: ...
 
 ### Next step
-Apply via `fixer`, or request a `code-reviewer` pass first.
+Apply via `debugger`, or request a `code-reviewer` pass first.
 ```
 
 ---
