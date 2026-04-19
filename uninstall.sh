@@ -288,36 +288,6 @@ cleanup_orphaned_skills() {
     fi
 }
 
-remove_auto_compact() {
-    echo "Checking autoCompactEnabled in ~/.claude.json..."
-    local claude_json="$HOME/.claude.json"
-
-    if [ ! -f "$claude_json" ]; then
-        echo "  ~/.claude.json not found, skipping"
-        return 0
-    fi
-
-    if ! jq empty "$claude_json" 2>/dev/null; then
-        add_warning "~/.claude.json is not valid JSON, skipping autoCompactEnabled removal"
-        return 0
-    fi
-
-    if jq -e '.autoCompactEnabled == false' "$claude_json" > /dev/null 2>&1; then
-        if [ "$DRY_RUN" = true ]; then
-            echo "  [dry-run] Would remove autoCompactEnabled (currently set to false)"
-        else
-            if jq 'del(.autoCompactEnabled)' "$claude_json" > "$claude_json.tmp" && mv "$claude_json.tmp" "$claude_json"; then
-                echo "  Removed autoCompactEnabled"
-            else
-                rm -f "$claude_json.tmp"
-                add_warning "Failed to remove autoCompactEnabled"
-            fi
-        fi
-    else
-        echo "  autoCompactEnabled is not set to false, skipping"
-    fi
-}
-
 remove_ntfy_topic() {
     echo "Removing NTFY_TOPIC from ~/.claude/settings.json..."
     local settings="$HOME/.claude/settings.json"
@@ -463,13 +433,10 @@ echo ""
 uninstall_cli_tools
 echo ""
 
-# Remove autoCompactEnabled from ~/.claude.json and NTFY_TOPIC from settings.json
+# Remove NTFY_TOPIC from ~/.claude/settings.json
 if ! command -v jq &> /dev/null; then
-    add_warning "jq not found. Skipping autoCompactEnabled removal from ~/.claude.json."
     add_warning "jq not found. Skipping NTFY_TOPIC removal from ~/.claude/settings.json."
 else
-    remove_auto_compact
-    echo ""
     remove_ntfy_topic
 fi
 echo ""

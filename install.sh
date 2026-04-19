@@ -291,23 +291,9 @@ def deepmerge:
 [.[0], .[1]] | deepmerge
 '
 
-# Merges JSON configuration files into ~/.claude.json and ~/.claude/settings.json
-# - Sets autoCompactEnabled in ~/.claude.json
-# - Merges sandbox-settings.json into ~/.claude/settings.json (deep merge with array concatenation)
+# Merges sandbox-settings.json into ~/.claude/settings.json (deep merge with array concatenation).
 merge_json_configs() {
     echo "Updating JSON configurations..."
-
-    # Update ~/.claude.json with autoCompactEnabled
-    echo "Setting autoCompactEnabled in ~/.claude.json..."
-    if [ ! -f "$HOME/.claude.json" ]; then
-        echo '{}' > "$HOME/.claude.json"
-    fi
-
-    if jq '. + {"autoCompactEnabled": false}' "$HOME/.claude.json" > "$HOME/.claude.json.tmp" && mv "$HOME/.claude.json.tmp" "$HOME/.claude.json"; then
-        echo "autoCompactEnabled set to false"
-    else
-        add_error "Failed to update autoCompactEnabled in ~/.claude.json"
-    fi
 
     # Merge sandbox-settings.json into ~/.claude/settings.json (recursive overwrite)
     echo "Merging sandbox settings configuration..."
