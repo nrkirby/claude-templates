@@ -31,7 +31,6 @@ readonly TOOLS=(
 readonly SKILLS=(
     "vercel-labs/agent-browser --skill agent-browser"
     "https://github.com/upstash/context7 --skill context7-cli"
-    "vercel-labs/agent-browser --skill dogfood"
     "getsentry/skills --skill find-bugs"
     "getsentry/skills --skill gha-security-review"
     "https://github.com/kepano/obsidian-skills --skill obsidian-cli"
