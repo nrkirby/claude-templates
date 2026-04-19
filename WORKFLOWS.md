@@ -24,6 +24,7 @@ Task-driven guide for finding the right tool, skill, or command. Organized by wh
 | Look up library docs | context7-cli | Say `use context7 for <library>`, or mention `ctx7`/`context7` |
 | Search the web | tavily-cli | `search for X`, `look up X`, `research X in depth`, or `extract content from <url>` |
 | Build with Claude API/SDK | claude-api | Auto-activated when code imports `anthropic` or `@anthropic-ai/sdk` |
+| Write or review technical docs | ct:documentation | Say `document this`, `write a README`, `improve these docs` — Diátaxis framework, language-agnostic |
 
 **HINT**: On the `CLAUDE.md` of the project, explain how to run the project, which test users to use, etc. so the agent can run and verify the changes itself.
 **HINT**: When working on CSS changes, encourage the agent to take screenshots when it needs to check if the change it made had the desired effect.
@@ -43,6 +44,9 @@ Task-driven guide for finding the right tool, skill, or command. Organized by wh
 | Check test quality with mutations | ct:mutation-testing | `run mutation testing` — diff-scoped, auto-detects language |
 | Set up complexity linting | ct:lint-guard | `set up linting` — 17-language detection, strict complexity rules, Stop hook |
 | Quick cleanup of changed code | simplify | `/simplify` — reviews for reuse, quality, efficiency and fixes issues |
+| Triage a stack trace | ct:stacktrace-triage | Paste the trace; say `here's the stack trace`, `triage this error`, or `why did this crash` (read-only) |
+| Triage a CI failure | ct:ci-failure-triage | Say `CI is failing`, `why did the build break`, or paste a `gh run` URL (read-only) |
+| Diagnose a runtime failure / debug | ct:debugger agent | Say `debug this`, `find the bug`, `why is this failing`; auto-handoff from stacktrace-triage / ci-failure-triage |
 
 ## Refactoring & Performance
 
@@ -61,12 +65,14 @@ Task-driven guide for finding the right tool, skill, or command. Organized by wh
 | Commit changes | /commit | `/commit` |
 | Commit + push + open PR | /commit-push-pr | `/commit-push-pr` |
 | Clean up merged branches | /clean_gone | `/clean_gone` |
+| Bump dependencies | ct:dependency-bump | Say `bump deps`, `update dependencies`, `what's outdated` — staged plan (patch → minor → major), runs tests |
 
 ## Security & Threat Modeling
 
 | When I need to... | Use | How |
 |---|---|---|
 | Threat model a feature | ct:threat-modeling | Auto-activated for auth, payments, webhooks, OAuth; or say `threat model this` |
+| Code-level security audit | ct:security-auditor agent | Say `security audit`, `OWASP review`, or `find vulnerabilities` — file:line evidence, complements threat-modeling (design) and dast-scan (runtime) |
 | Scan running app for vulnerabilities | ct:dast-scan | `scan for vulnerabilities` — Nuclei fast scan + ZAP deep scan |
 | SAST scan on every edit | semgrep-on-edit hook | Automatic — runs after every Edit/Write, blocks on findings. Skip: `SKIP_SEMGREP=1` |
 | Detect secrets before commit | gitleaks git hook | Automatic — runs on `git commit`. Skip: `SKIP_GITLEAKS=1` |

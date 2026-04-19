@@ -13,7 +13,7 @@ This is the complete inventory of every plugin, skill, agent, command, hook, MCP
   - [Claude Code Setup](#claude-code-setup-1-skill)
   - [Hookify](#hookify-1-skill-1-agent-4-commands)
   - [Skill Creator](#skill-creator-1-skill)
-  - [CT](#ct-13-skills-6-agents)
+  - [CT](#ct-18-skills-7-agents)
   - [Engram](#engram-1-skill-mcp-server)
 - [Global Skills](#global-skills)
   - [Code Quality & Review](#code-quality--review-4-skills)
@@ -140,9 +140,9 @@ Create, modify, and measure skill performance with evals and variance analysis.
 | -------------- | ----- | ------------------------------------------------------------------------ |
 | skill-creator  | skill | Create new skills, modify existing ones, run evals, benchmark performance |
 
-### CT (14 skills, 5 agents)
+### CT (18 skills, 7 agents)
 
-Code quality, security, refactoring, and development workflows.
+Code quality, security, refactoring, triage, and development workflows.
 
 **Source:** this repo (`plugins/ct/`)
 
@@ -150,7 +150,10 @@ Code quality, security, refactoring, and development workflows.
 | ------------------------- | ------- | ------------------------------------------------------------------------------ |
 | audit-skills              | skill   | Review installed skills for redundancy with model knowledge                    |
 | bugmagnet                 | skill   | Discover edge cases and test coverage gaps through systematic analysis         |
+| ci-failure-triage         | skill   | Diagnose failing GitHub Actions runs — fetch logs, correlate with commits, ranked top-3 root causes (read-only) |
 | dast-scan                 | skill   | Dynamic security scanning — Nuclei (fast) + ZAP Docker (deep, opt-in)          |
+| dependency-bump           | skill   | Detect ecosystem, run outdated/audit, propose staged bump plan, regenerate lockfile, run tests |
+| documentation             | skill   | Write or review technical docs (READMEs, runbooks, API ref) using the Diátaxis framework |
 | duplicate-code-detector   | skill   | Find duplicated code using jscpd, classify and plan refactoring                |
 | fix-loop                  | skill   | Iterative review-fix cycle — code-reviewer, fixer, verify, repeat until clean  |
 | incremental-refactoring   | skill   | Refactor one transformation at a time, high-impact focus                       |
@@ -160,13 +163,16 @@ Code quality, security, refactoring, and development workflows.
 | postgres                  | skill   | Deep PostgreSQL operational guide — MVCC, autovacuum, WAL, replication, pooling |
 | reflect                   | skill   | Self-reflection after work sessions — structured proposals with review gate    |
 | research                  | skill   | Systematic research with scientific methodology and evidence-based synthesis   |
+| stacktrace-triage         | skill   | Parse stack traces, separate user vs library frames, ranked top-3 hypothesis tree (read-only) |
 | threat-modeling           | skill   | STRIDE framework threat analysis for auth, payments, APIs, webhooks            |
 | wcag-audit                | skill   | WCAG accessibility auditing — static analysis + axe-core runtime               |
 | code-reviewer             | agent   | Autonomous code review seeking disconfirmation — best practices, security, performance |
 | code-simplifier           | agent   | Simplify code for clarity while preserving functionality                       |
+| debugger                  | agent   | Autonomous runtime failure debugger — root-cause diagnosis for errors, test failures, flaky tests |
 | evaluator                 | agent   | Dynamic QA — runs the app, tests UX flows, scores criteria                     |
 | fixer                     | agent   | Targeted minimal fixes for critical review findings, verifies tests pass       |
 | refactor-scan             | agent   | Code quality coach — guides refactoring decisions post-TDD                     |
+| security-auditor          | agent   | Autonomous code-level security auditor — OWASP Top 10, STRIDE, file:line evidence (read-only) |
 
 ### Engram (1 skill, MCP server)
 
@@ -183,7 +189,7 @@ Persistent memory across sessions via SQLite + FTS5. Disables built-in auto-memo
 
 ## Global Skills
 
-**46 skills total** — 33 from plugins (see [Plugins](#plugins) above) and 13 from [skills.sh](https://skills.sh) + tools (below).
+**50 skills total** — 37 from plugins (see [Plugins](#plugins) above) and 13 from [skills.sh](https://skills.sh) + tools (below).
 
 ### Code Quality & Review (4 skills)
 

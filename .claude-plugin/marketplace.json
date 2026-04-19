@@ -9,7 +9,7 @@
     {
       "name": "ct",
       "version": "1.3.4",
-      "description": "Battle-tested skills, agents, and commands for Claude Code — TDD, debugging, code review, and parallel workflows",
+      "description": "Battle-tested skills, agents, and commands for Claude Code — TDD, debugging, code review, and more",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/pvillega/claude-templates",
